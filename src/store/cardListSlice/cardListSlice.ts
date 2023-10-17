@@ -16,7 +16,7 @@ export const cardListSlice = createSlice({
             state.toDoList.unshift({id: uId(), content: action.payload.content, date: action.payload.date, fulfillment: action.payload.fulfillment});
         },
         update(state, action: PayloadAction<Task>) {
-            state.toDoList.filter((item: Task) => {
+            state.toDoList.filter((item) => {
                 if(item.id === action.payload.id) {
                     item.content = action.payload.content;
                     item.date = action.payload.date;
@@ -24,6 +24,9 @@ export const cardListSlice = createSlice({
                 }
             });
             state.toDoList.sort((a, b) => +a.fulfillment - +b.fulfillment);
-        }
+        },
+        deleteTask(state, action: PayloadAction<Task>) {
+            state.toDoList = state.toDoList.filter((item) => item.id !== action.payload.id);
+        },
     }
 });

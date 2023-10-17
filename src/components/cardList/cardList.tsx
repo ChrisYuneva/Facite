@@ -6,13 +6,14 @@ import {
   FormControlLabel,
   FormGroup,
   Grid,
-  TextField
+  TextField,
 } from "@mui/material";
 import style from "./style.module.css";
 import { useAppDispatch } from "../../hooks/hooks";
 import { cardListSlice } from "../../store/cardListSlice/cardListSlice";
 import { useState } from "react";
 import { Task } from "../../store/types/types";
+import TaskMenu from "../taskMenu/taskMenu";
 
 interface CardListProps {
   titleList: string;
@@ -95,6 +96,7 @@ function CardList({ titleList, toDoList }: CardListProps) {
                   key={task.content}
                   className={task.fulfillment ? style.done : ''}
                 />
+                <TaskMenu task={task} />
               </Card>
             );
           })}
