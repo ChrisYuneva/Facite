@@ -1,9 +1,9 @@
-import CardList from "../../components/cardList/cardList";
-import {Grid} from "@mui/material";
+import CardList from '../../components/cardList/cardList';
+import {Grid} from '@mui/material';
 import style from './style.module.css';
-import {useAppSelector } from "../../hooks/hooks";
-import { useEffect, useState } from "react";
-import { DateFormat } from "../../store/types/types";
+import {useAppSelector } from '../../hooks/hooks';
+import { useEffect, useState } from 'react';
+import { DateFormat } from '../../store/types/types';
 
 const currentDate = new Date();
 
@@ -23,8 +23,14 @@ function MainPage() {
     return (
         <Grid container>
             <Grid item xs={12} className={style.wrap}>
-                <CardList titleList="Сегодня" toDoList={toDoList.filter(item => item.date.day === today.day)} />
-                <CardList titleList="Завтра" toDoList={toDoList.filter(item => item.date.day === today.day+1)} />
+                <CardList 
+                    titleList='Сегодня' 
+                    toDoList={toDoList.filter(item => item.date.day === today.day)} 
+                />
+                <CardList 
+                    titleList='Завтра' 
+                    toDoList={toDoList.filter(item => item.date.day === today.day+1)} 
+                />
             </Grid>
         </Grid>
     );

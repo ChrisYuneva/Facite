@@ -3,18 +3,17 @@ import {
   Card,
   CardHeader,
   Checkbox,
-  FormControlLabel,
   FormGroup,
   Grid,
   TextField,
   Typography,
-} from "@mui/material";
-import style from "./style.module.css";
-import { useAppDispatch } from "../../hooks/hooks";
-import { cardListSlice } from "../../store/cardListSlice/cardListSlice";
-import { useState } from "react";
-import { Task } from "../../store/types/types";
-import TaskMenu from "../taskMenu/taskMenu";
+} from '@mui/material';
+import style from './style.module.css';
+import { useAppDispatch } from '../../hooks/hooks';
+import { cardListSlice } from '../../store/cardListSlice/cardListSlice';
+import { useState } from 'react';
+import { Task } from '../../store/types/types';
+import TaskMenu from '../taskMenu/taskMenu';
 
 interface CardListProps {
   titleList: string;
@@ -24,20 +23,20 @@ interface CardListProps {
 const currentDate = new Date();
 
 function CardList({ titleList, toDoList }: CardListProps) {
-  const [content, setContent] = useState<string>("");
+  const [content, setContent] = useState<string>('');
 
   const dispatch = useAppDispatch();
   const { add, update } = cardListSlice.actions;
 
   function getDate() {
     switch (titleList) {
-      case "Сегодня":
+      case 'Сегодня':
         return {
           day: currentDate.getDate(),
           month: currentDate.getMonth() + 1,
           year: currentDate.getFullYear(),
         };
-      case "Завтра":
+      case 'Завтра':
         return {
           day: currentDate.getDate() + 1,
           month: currentDate.getMonth() + 1,
@@ -54,7 +53,7 @@ function CardList({ titleList, toDoList }: CardListProps) {
 
   function addTask() {
     dispatch(add({ content: content, fulfillment: false, date: getDate() }));
-    setContent("");
+    setContent('');
   }
   
   function updateTaskFulfillment(task: Task) {
@@ -74,9 +73,9 @@ function CardList({ titleList, toDoList }: CardListProps) {
             setContent(event.target.value);
           }}
           className={style.inputTask}
-          id="outlined-basic"
-          label="Нужно..."
-          variant="outlined"
+          id='outlined-basic'
+          label='Нужно...'
+          variant='outlined'
         />
 
         <FormGroup className={style.taskWrap}>
@@ -93,7 +92,6 @@ function CardList({ titleList, toDoList }: CardListProps) {
             );
           })}
         </FormGroup>
-
         <Button onClick={addTask}>Добавить задачу</Button>
       </Card>
     </Grid>
