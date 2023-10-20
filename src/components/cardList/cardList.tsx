@@ -7,6 +7,7 @@ import {
   FormGroup,
   Grid,
   TextField,
+  Typography,
 } from "@mui/material";
 import style from "./style.module.css";
 import { useAppDispatch } from "../../hooks/hooks";
@@ -65,7 +66,6 @@ function CardList({ titleList, toDoList }: CardListProps) {
       <Card id={titleList} className={style.wrap}>
         <CardHeader
           title={titleList}
-          // component={Typography}
           className={style.titleCard}
         ></CardHeader>
         <TextField
@@ -82,21 +82,13 @@ function CardList({ titleList, toDoList }: CardListProps) {
         <FormGroup className={style.taskWrap}>
           {toDoList.map((task) => {
             return (
-              <Card className={style.taskCardWrap}>
-                <FormControlLabel
-                  control={
-                    <Checkbox
+              <Card className={task.fulfillment ? `${style.done} ${style.taskCardWrap}` : style.taskCardWrap}>
+                <Checkbox
                       checked={task.fulfillment}
                       onClick={() => updateTaskFulfillment(task)}
                     />
-                  }
-                  label={task.content}
-                  id={task.id}
-                  sx={{ marginBottom: "8px", marginLeft: 0 }}
-                  key={task.content}
-                  className={task.fulfillment ? style.done : ''}
-                />
-                <TaskMenu task={task} />
+                    <Typography className={style.taskCardContent}>{task.content}</Typography>
+                    <TaskMenu task={task} />
               </Card>
             );
           })}

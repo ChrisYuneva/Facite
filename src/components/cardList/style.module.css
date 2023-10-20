@@ -24,7 +24,15 @@
 .taskCardWrap {
     width: 95%;
     margin-top: 8px;
+    display: flex;
+    justify-content: space-between;
     /* background-color: #F2F9F9; */
+}
+
+.taskCardContent {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .done {

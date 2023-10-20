@@ -11,7 +11,6 @@ interface TaskMenuProps {
 
 function TaskMenu({ task }: TaskMenuProps) {
     const dispatch = useAppDispatch();
-    // const { delete, add } = cardListSlice.actions;
     const { deleteTask } = cardListSlice.actions;
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);

@@ -25,8 +25,6 @@ function MainPage() {
             <Grid item xs={12} className={style.wrap}>
                 <CardList titleList="Сегодня" toDoList={toDoList.filter(item => item.date.day === today.day)} />
                 <CardList titleList="Завтра" toDoList={toDoList.filter(item => item.date.day === today.day+1)} />
-                {/* <CardList titleList="На следующей неделе" toDoList={toDoList} />
-                <CardList titleList="Потом" toDoList={toDoList} /> */}
             </Grid>
         </Grid>
     );
