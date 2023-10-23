@@ -4,18 +4,20 @@ import style from './style.module.css';
 import {useAppSelector } from '../../hooks/hooks';
 import { useEffect, useState } from 'react';
 import { DateFormat } from '../../store/types/types';
+import { getCurrentWeek } from '../../utils/utils';
 
 const currentDate = new Date();
 
 function MainPage() {
     const { toDoList } = useAppSelector((state) => state.cardList);
 
-    const [today, setToday] = useState<DateFormat>({ day: 0, month: 0, year: 0 });
+    const [today, setToday] = useState<DateFormat>({ day: 0, month: 0, week: 0, year: 0 });
 
     useEffect(() => {
         setToday({
             day: currentDate.getDate(),
             month: currentDate.getMonth()+1,
+            week: getCurrentWeek(currentDate),
             year: currentDate.getFullYear()
         });
     }, []);
@@ -30,6 +32,10 @@ function MainPage() {
                 <CardList 
                     titleList='Завтра' 
                     toDoList={toDoList.filter(item => item.date.day === today.day+1)} 
+                />
+                <CardList 
+                    titleList='На следующей неделе' 
+                    toDoList={toDoList.filter(item => item.date.week !== today.week)} 
                 />
             </Grid>
         </Grid>
