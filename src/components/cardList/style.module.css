@@ -1,5 +1,41 @@
 .wrap {
-    padding: 8px;
-    /*min-width: 200px;*/
-    /*max-width: 200px;*/
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.titleCard {
+    background-color: #24A19C;
+    color: white;
+    width: -webkit-fill-available;
+    margin-bottom: 8px;
+}
+
+.inputTask {
+    width: 95%;
+    margin-top: 8px;
+}
+
+.taskWrap {
+    width: 100%;
+    align-items: center;
+}
+
+.taskCardWrap {
+    width: 95%;
+    margin-top: 8px;
+    display: flex;
+    justify-content: space-between;
+    /* background-color: #F2F9F9; */
+}
+
+.taskCardContent {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.done {
+    text-decoration: line-through;
+    opacity: 0.5;
 }
