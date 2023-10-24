@@ -9,7 +9,7 @@ import {
   Typography,
 } from '@mui/material';
 import style from './style.module.css';
-import { useAppDispatch } from '../../hooks/hooks';
+import { useAppDispatch, useAppSelector } from '../../hooks/hooks';
 import { cardListSlice } from '../../store/cardListSlice/cardListSlice';
 import { useState } from 'react';
 import { Task } from '../../store/types/types';
@@ -26,11 +26,12 @@ const currentDate = new Date();
 function CardList({ titleList, toDoList }: CardListProps) {
   const [content, setContent] = useState<string>('');
   const [alert, setAlert] = useState<boolean>(false);
-
+  
   const dispatch = useAppDispatch();
   const { add, update } = cardListSlice.actions;
+  const allToDoList = useAppSelector((state) => state.cardList.toDoList);
 
-  function getDate() {
+  function getDate(titleList: string) {
     switch (titleList) {
       case 'Сегодня':
         return {
@@ -68,7 +69,7 @@ function CardList({ titleList, toDoList }: CardListProps) {
       setAlert(true);
     } else {
       setAlert(false);
-      dispatch(add({ content: content, fulfillment: false, date: getDate() }));
+      dispatch(add({ content: content, fulfillment: false, date: getDate(titleList) }));
       setContent('');
     }
   }
@@ -77,9 +78,28 @@ function CardList({ titleList, toDoList }: CardListProps) {
     dispatch(update({ ...task, fulfillment: !task.fulfillment }));
   }
 
+  function onDropTask(event: React.DragEvent<HTMLDivElement>) {
+    const currentId = event.dataTransfer.getData('id')
+    const currentToDo = allToDoList.find((el) => el.id === currentId);
+
+    dispatch(update({
+      id: currentToDo?.id,
+      content: currentToDo?.content ?? '',
+      fulfillment: currentToDo?.fulfillment ?? false,
+      date: getDate(event.currentTarget.id)
+    }));
+
+    event.dataTransfer.clearData();
+  }
+
   return (
     <Grid item xs={3}>
-      <Card id={titleList} className={style.wrap}>
+      <Card 
+        id={titleList} 
+        className={style.wrap} 
+        onDragOver={(event) => event.preventDefault()} 
+        onDrop={event => onDropTask(event)}
+        >
         <CardHeader title={titleList} className={style.titleCard}></CardHeader>
         <TextField
           value={content}
@@ -104,6 +124,11 @@ function CardList({ titleList, toDoList }: CardListProps) {
                     : style.taskCardWrap
                 }
                 key={task.id}
+                id={task.id}
+                draggable={true}
+                onDragStart={event => {
+                  event.dataTransfer.setData('id', event.target.id);
+                }}
               >
                 <Checkbox
                   checked={task.fulfillment}
