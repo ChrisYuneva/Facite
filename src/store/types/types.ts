@@ -6,10 +6,13 @@ export interface initialTypeCardList {
 
 export interface Task {
     id?: string,
-    content: string, 
+    content: string,
+    priority: Priority,
     fulfillment: boolean,
     date: DateFormat
 }
+
+export type Priority = 'default' |'urgently' | 'veryUrgently'
 
 export interface DateFormat {
     day: number,

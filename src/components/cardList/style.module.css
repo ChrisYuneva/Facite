@@ -39,3 +39,11 @@
     text-decoration: line-through;
     opacity: 0.5;
 }
+
+.urgently {
+    background-color: #ffffc6 !important;
+}
+
+.veryUrgently {
+    background-color: #ff00003b !important;
+}

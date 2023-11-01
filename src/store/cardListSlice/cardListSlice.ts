@@ -13,7 +13,7 @@ export const cardListSlice = createSlice({
     initialState,
     reducers: {
         add(state, action: PayloadAction<Task>) {
-            state.toDoList.unshift({id: uId(), content: action.payload.content, date: action.payload.date, fulfillment: action.payload.fulfillment});
+            state.toDoList.unshift({id: uId(), content: action.payload.content, priority: action.payload.priority, date: action.payload.date, fulfillment: action.payload.fulfillment});
         },
         update(state, action: PayloadAction<Task>) {
             state.toDoList.filter((item) => {
