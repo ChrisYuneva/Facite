@@ -18,5 +18,5 @@ export interface DateFormat {
     day: number,
     month: number,
     week: number,
-    year: number
+    year: number,
 }

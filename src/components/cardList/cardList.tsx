@@ -31,6 +31,7 @@ function CardList({ titleList, toDoList }: CardListProps) {
   const [alert, setAlert] = useState<boolean>(false);
   const [priority, setPriority] = useState<Priority>('default');
   const [openModal, setOpenModal] = useState(false);
+  const [currentTask, setCurrentTask] = useState<Task | null>(null);
 
   const dispatch = useAppDispatch();
   const { add, update } = cardListSlice.actions;
@@ -76,8 +77,8 @@ function CardList({ titleList, toDoList }: CardListProps) {
       setAlert(false);
       dispatch(
         add({
-          content: content,
-          priority: priority,
+          content,
+          priority,
           fulfillment: false,
           date: getDate(titleList),
         })
@@ -129,12 +130,14 @@ function CardList({ titleList, toDoList }: CardListProps) {
     return style.taskCardWrap;
   }
 
-  function handleUpdate() {
+  function handleUpdate(event: React.MouseEvent<HTMLSpanElement, MouseEvent>) {
+    setCurrentTask(toDoList.find(item => item.id === event.target.id) ?? null);
     setOpenModal(true);
   }
 
   function handleClose() {
     setOpenModal(false);
+    setCurrentTask(null);
   }
 
   return (
@@ -184,23 +187,25 @@ function CardList({ titleList, toDoList }: CardListProps) {
                 />
                 <Typography
                   className={style.taskCardContent}
-                  onClick={() => handleUpdate()}
+                  id={task.id}
+                  onClick={(event) => handleUpdate(event)}
                 >
                   {task.content}
                 </Typography>
                 <TaskMenu task={task} />
-
-                <TaskModalWindow
-                  task={task}
-                  open={openModal}
-                  onClose={handleClose}
-                />
               </Card>
             );
           })}
         </FormGroup>
         <Button onClick={addTask}>Добавить задачу</Button>
       </Card>
+      {
+        currentTask && <TaskModalWindow
+          task={currentTask}
+          open={openModal}
+          onClose={handleClose}
+        />
+      }
     </Grid>
   );
 }

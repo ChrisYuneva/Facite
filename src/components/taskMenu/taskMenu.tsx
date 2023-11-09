@@ -13,7 +13,6 @@ import { cardListSlice } from '../../store/cardListSlice/cardListSlice';
 import TaskModalWindow from '../taskModalWindow/taskModalWindow';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import InputTaskMenu from '../inputTaskMenu/inputTaskMenu';
 
 interface TaskMenuProps {

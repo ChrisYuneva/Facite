@@ -6,45 +6,68 @@ import {
   MenuItem,
   Typography,
 } from '@mui/material';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { useState } from 'react';
-import { useAppDispatch } from '../../hooks/hooks';
+import { useEffect, useState } from 'react';
+import { useAppDispatch, useAppSelector } from '../../hooks/hooks';
 import { Priority, Task } from '../../store/types/types';
 import { cardListSlice } from '../../store/cardListSlice/cardListSlice';
-import TaskModalWindow from '../taskModalWindow/taskModalWindow';
-import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import NewReleasesIcon from '@mui/icons-material/NewReleases';
 import AdjustIcon from '@mui/icons-material/Adjust';
+import style from './style.module.css';
 
 interface InputTaskMenuProps {
-  task?: Task;
-  setPriority?: React.Dispatch<React.SetStateAction<Priority>>;
   visibleButton: boolean;
+  task?: Task;
+  setCurrentTask?: React.Dispatch<React.SetStateAction<Task | null>>;
+  setPriority?: React.Dispatch<React.SetStateAction<Priority>>;
 }
 
 function InputTaskMenu({
   task,
   visibleButton = false,
+  setCurrentTask,
   setPriority,
 }: InputTaskMenuProps) {
+  const { toDoList } = useAppSelector(state => state.cardList);
+
   const dispatch = useAppDispatch();
   const { update } = cardListSlice.actions;
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+  const [classNameBtn, setClassNameBtn] = useState(task?.priority ?? '');
 
   function handleClick(event: React.MouseEvent<HTMLButtonElement>) {
     setAnchorEl(event.currentTarget);
   }
 
+  function changeClassNameBtn(priority: Priority) {
+    if(priority === 'urgently') {
+      setClassNameBtn(`${style.urgently}`);
+    }
+    if(priority === 'veryUrgently') {
+      setClassNameBtn(`${style.veryUrgently}`);
+    }
+    if(classNameBtn !== '' && priority === 'default') {
+      setClassNameBtn('');
+    }
+  }
+
   function handlePriorityUpdate(priority: Priority) {
     if (task) {
-      dispatch(update({ ...task, priority }));
+      if(setCurrentTask) {
+        setCurrentTask({ ...task, priority });
+      }
+      else {
+        dispatch(update({ ...task, priority }));
+      }
+
+      changeClassNameBtn(priority);
     } else {
       if (setPriority) {
         setPriority(priority);
+
+        changeClassNameBtn(priority);
       }
     }
 
@@ -55,6 +78,10 @@ function InputTaskMenu({
     setAnchorEl(null);
   }
 
+  useEffect(() => {
+    setClassNameBtn('');
+  }, [toDoList.length]);
+
   return (
     <>
       {visibleButton && (
@@ -64,6 +91,7 @@ function InputTaskMenu({
           aria-haspopup='true'
           aria-expanded={open ? 'true' : undefined}
           onClick={handleClick}
+          className={classNameBtn}
         >
           <ErrorOutlineIcon />
         </IconButton>
