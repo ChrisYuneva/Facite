@@ -1,4 +1,10 @@
-import { IconButton, ListItemIcon, ListItemText, Menu, MenuItem } from '@mui/material';
+import {
+  IconButton,
+  ListItemIcon,
+  ListItemText,
+  Menu,
+  MenuItem,
+} from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { useState } from 'react';
 import { useAppDispatch } from '../../hooks/hooks';
@@ -72,15 +78,14 @@ function TaskMenu({ task }: TaskMenuProps) {
           </ListItemIcon>
           <ListItemText>Редактировать</ListItemText>
         </MenuItem>
-        <MenuItem onClick={() => {}}>
-        <ListItemIcon>
-            <ErrorOutlineIcon />
-          </ListItemIcon> 
-          <ListItemText>Приоритетность</ListItemText>
-          <InputTaskMenu task={task} />
+        <MenuItem>
+          <InputTaskMenu
+            visibleButton={false}
+            task={task}
+          />
         </MenuItem>
         <MenuItem onClick={handleDelete}>
-        <ListItemIcon>
+          <ListItemIcon>
             <DeleteIcon />
           </ListItemIcon>
           <ListItemText>Удалить</ListItemText>

@@ -4,6 +4,7 @@ import {
   ListItemText,
   Menu,
   MenuItem,
+  Typography,
 } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { useState } from 'react';
@@ -15,13 +16,19 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import NewReleasesIcon from '@mui/icons-material/NewReleases';
+import AdjustIcon from '@mui/icons-material/Adjust';
 
 interface InputTaskMenuProps {
   task?: Task;
   setPriority?: React.Dispatch<React.SetStateAction<Priority>>;
+  visibleButton: boolean;
 }
 
-function InputTaskMenu({ setPriority, task }: InputTaskMenuProps) {
+function InputTaskMenu({
+  task,
+  visibleButton = false,
+  setPriority,
+}: InputTaskMenuProps) {
   const dispatch = useAppDispatch();
   const { update } = cardListSlice.actions;
 
@@ -34,7 +41,7 @@ function InputTaskMenu({ setPriority, task }: InputTaskMenuProps) {
 
   function handlePriorityUpdate(priority: Priority) {
     if (task) {
-      dispatch(update({ ...task, priority: task.priority }));
+      dispatch(update({ ...task, priority }));
     } else {
       if (setPriority) {
         setPriority(priority);
@@ -50,15 +57,26 @@ function InputTaskMenu({ setPriority, task }: InputTaskMenuProps) {
 
   return (
     <>
-      <IconButton
-        id='basic-button'
-        aria-controls={open ? 'basic-menu' : undefined}
-        aria-haspopup='true'
-        aria-expanded={open ? 'true' : undefined}
-        onClick={handleClick}
-      >
-        <ErrorOutlineIcon />
-      </IconButton>
+      {visibleButton && (
+        <IconButton
+          id='basic-button'
+          aria-controls={open ? 'basic-menu' : undefined}
+          aria-haspopup='true'
+          aria-expanded={open ? 'true' : undefined}
+          onClick={handleClick}
+        >
+          <ErrorOutlineIcon />
+        </IconButton>
+      )}
+      {!visibleButton && (
+        <>
+          <ListItemIcon>
+            <ErrorOutlineIcon />
+          </ListItemIcon>
+          <Typography onClick={handleClick}>Приоритетность</Typography>
+        </>
+      )}
+
       <Menu
         id='basic-menu'
         anchorEl={anchorEl}
@@ -68,6 +86,12 @@ function InputTaskMenu({ setPriority, task }: InputTaskMenuProps) {
           'aria-labelledby': 'basic-button',
         }}
       >
+        <MenuItem onClick={() => handlePriorityUpdate('default')}>
+          <ListItemIcon>
+            <AdjustIcon />
+          </ListItemIcon>
+          <ListItemText>Не срочно</ListItemText>
+        </MenuItem>
         <MenuItem onClick={() => handlePriorityUpdate('urgently')}>
           <ListItemIcon>
             <ErrorOutlineIcon />

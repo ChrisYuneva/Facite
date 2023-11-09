@@ -21,6 +21,7 @@ export const cardListSlice = createSlice({
                     item.content = action.payload.content;
                     item.date = action.payload.date;
                     item.fulfillment = action.payload.fulfillment;
+                    item.priority = action.payload.priority;
                 }
             });
             state.toDoList.sort((a, b) => +a.fulfillment - +b.fulfillment);

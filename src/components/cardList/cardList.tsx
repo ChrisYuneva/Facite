@@ -17,6 +17,7 @@ import { Priority, Task } from '../../store/types/types';
 import TaskMenu from '../taskMenu/taskMenu';
 import { getCurrentWeek, getUpcomingMonday } from '../../utils/utils';
 import InputTaskMenu from '../inputTaskMenu/inputTaskMenu';
+import TaskModalWindow from '../taskModalWindow/taskModalWindow';
 
 interface CardListProps {
   titleList: string;
@@ -29,6 +30,7 @@ function CardList({ titleList, toDoList }: CardListProps) {
   const [content, setContent] = useState<string>('');
   const [alert, setAlert] = useState<boolean>(false);
   const [priority, setPriority] = useState<Priority>('default');
+  const [openModal, setOpenModal] = useState(false);
 
   const dispatch = useAppDispatch();
   const { add, update } = cardListSlice.actions;
@@ -108,21 +110,31 @@ function CardList({ titleList, toDoList }: CardListProps) {
 
   function getClassNameForCard(task: Task) {
     const currentPriority = task.priority;
-    const notDefaultStyle = `${style.taskCardWrap} ${currentPriority === 'urgently' ? style.urgently : style.veryUrgently}`;
+    const notDefaultStyle = `${style.taskCardWrap} ${
+      currentPriority === 'urgently' ? style.urgently : style.veryUrgently
+    }`;
 
-    if(task.fulfillment) {
-      if(currentPriority !== 'default') {
+    if (task.fulfillment) {
+      if (currentPriority !== 'default') {
         return `${style.done} ${notDefaultStyle}`;
       } else {
         return `${style.taskCardWrap} ${style.done}`;
       }
     }
 
-    if(currentPriority !== 'default') {
+    if (currentPriority !== 'default') {
       return notDefaultStyle;
     }
-    
+
     return style.taskCardWrap;
+  }
+
+  function handleUpdate() {
+    setOpenModal(true);
+  }
+
+  function handleClose() {
+    setOpenModal(false);
   }
 
   return (
@@ -148,7 +160,7 @@ function CardList({ titleList, toDoList }: CardListProps) {
           InputProps={{
             endAdornment: (
               <InputAdornment position='end'>
-                <InputTaskMenu setPriority={setPriority} />
+                <InputTaskMenu visibleButton={true} setPriority={setPriority} />
               </InputAdornment>
             ),
           }}
@@ -158,9 +170,7 @@ function CardList({ titleList, toDoList }: CardListProps) {
           {toDoList.map((task) => {
             return (
               <Card
-                className={
-                  getClassNameForCard(task)
-                }
+                className={getClassNameForCard(task)}
                 key={task.id}
                 id={task.id}
                 draggable={!task.fulfillment}
@@ -172,10 +182,19 @@ function CardList({ titleList, toDoList }: CardListProps) {
                   checked={task.fulfillment}
                   onClick={() => updateTaskFulfillment(task)}
                 />
-                <Typography className={style.taskCardContent}>
+                <Typography
+                  className={style.taskCardContent}
+                  onClick={() => handleUpdate()}
+                >
                   {task.content}
                 </Typography>
                 <TaskMenu task={task} />
+
+                <TaskModalWindow
+                  task={task}
+                  open={openModal}
+                  onClose={handleClose}
+                />
               </Card>
             );
           })}
