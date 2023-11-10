@@ -23,7 +23,7 @@ function MainPage() {
     }, []);
 
     return (
-        <Grid container>
+        <Grid container xs={12}>
             <Grid item xs={12} className={style.wrap}>
                 <CardList 
                     titleList='Сегодня' 

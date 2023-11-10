@@ -155,7 +155,7 @@ function CardList({ titleList, toDoList }: CardListProps) {
         onDragOver={(event) => event.preventDefault()}
         onDrop={(event) => onDropTask(event)}
       >
-        <CardHeader title={titleList} className={style.titleCard}></CardHeader>
+        <CardHeader title={titleList} className={style.titleCard} />
         <TextField
           value={content}
           onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
