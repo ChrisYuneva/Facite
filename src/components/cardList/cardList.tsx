@@ -60,6 +60,13 @@ function CardList({ titleList, toDoList }: CardListProps) {
           week: getCurrentWeek(currentDate) + 1,
           year: currentDate.getFullYear(),
         };
+        case 'Потом':
+        return {
+          day: 0,
+          month: 0,
+          week: 0,
+          year: 0,
+        };
       default:
         return {
           day: 0,
