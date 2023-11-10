@@ -23,7 +23,7 @@ function MainPage() {
     }, []);
 
     return (
-        <Grid container>
+        <Grid container xs={12}>
             <Grid item xs={12} className={style.wrap}>
                 <CardList 
                     titleList='Сегодня' 
@@ -35,7 +35,11 @@ function MainPage() {
                 />
                 <CardList 
                     titleList='На следующей неделе' 
-                    toDoList={toDoList.filter(item => item.date.week !== today.week)} 
+                    toDoList={toDoList.filter(item => item.date.week === today.week+1)} 
+                />
+                <CardList 
+                    titleList='Потом' 
+                    toDoList={toDoList.filter(item => item.date.day === 0)} 
                 />
             </Grid>
         </Grid>

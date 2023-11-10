@@ -1,10 +1,19 @@
-import { IconButton, Menu, MenuItem } from '@mui/material';
+import {
+  IconButton,
+  ListItemIcon,
+  ListItemText,
+  Menu,
+  MenuItem,
+} from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { useState } from 'react';
 import { useAppDispatch } from '../../hooks/hooks';
 import { Task } from '../../store/types/types';
 import { cardListSlice } from '../../store/cardListSlice/cardListSlice';
 import TaskModalWindow from '../taskModalWindow/taskModalWindow';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+import InputTaskMenu from '../inputTaskMenu/inputTaskMenu';
 
 interface TaskMenuProps {
   task: Task;
@@ -25,6 +34,10 @@ function TaskMenu({ task }: TaskMenuProps) {
 
   function handleDelete() {
     dispatch(deleteTask(task));
+    setAnchorEl(null);
+  }
+
+  function handlePriority() {
     setAnchorEl(null);
   }
 
@@ -58,8 +71,24 @@ function TaskMenu({ task }: TaskMenuProps) {
           'aria-labelledby': 'basic-button',
         }}
       >
-        <MenuItem onClick={handleUpdate}>Редактировать</MenuItem>
-        <MenuItem onClick={handleDelete}>Удалить</MenuItem>
+        <MenuItem onClick={handleUpdate}>
+          <ListItemIcon>
+            <EditIcon />
+          </ListItemIcon>
+          <ListItemText>Редактировать</ListItemText>
+        </MenuItem>
+        <MenuItem>
+          <InputTaskMenu
+            visibleButton={false}
+            task={task}
+          />
+        </MenuItem>
+        <MenuItem onClick={handleDelete}>
+          <ListItemIcon>
+            <DeleteIcon />
+          </ListItemIcon>
+          <ListItemText>Удалить</ListItemText>
+        </MenuItem>
       </Menu>
       <TaskModalWindow task={task} open={openModal} onClose={handleClose} />
     </>
