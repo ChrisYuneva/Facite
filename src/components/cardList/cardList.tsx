@@ -11,7 +11,7 @@ import {
 } from '@mui/material';
 import style from './style.module.css';
 import { useAppDispatch, useAppSelector } from '../../hooks/hooks';
-import { cardListSlice } from '../../store/cardListSlice/cardListSlice';
+import { cardListSlice } from '../../store/slices/cardListSlice/cardListSlice';
 import { useState } from 'react';
 import { Priority, Task } from '../../store/types/types';
 import TaskMenu from '../taskMenu/taskMenu';

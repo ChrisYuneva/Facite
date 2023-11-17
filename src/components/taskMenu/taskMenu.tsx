@@ -9,7 +9,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { useState } from 'react';
 import { useAppDispatch } from '../../hooks/hooks';
 import { Task } from '../../store/types/types';
-import { cardListSlice } from '../../store/cardListSlice/cardListSlice';
+import { cardListSlice } from '../../store/slices/cardListSlice/cardListSlice';
 import TaskModalWindow from '../taskModalWindow/taskModalWindow';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';

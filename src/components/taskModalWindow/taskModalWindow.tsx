@@ -7,7 +7,7 @@ import {
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useAppDispatch } from '../../hooks/hooks';
-import { cardListSlice } from '../../store/cardListSlice/cardListSlice';
+import { cardListSlice } from '../../store/slices/cardListSlice/cardListSlice';
 import { Task } from '../../store/types/types';
 import style from './style.module.css';
 import InputTaskMenu from '../inputTaskMenu/inputTaskMenu';

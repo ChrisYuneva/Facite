@@ -1,3 +1,18 @@
+export interface initialTypeUser {
+    email: string,
+    token: string,
+    id: string
+}
+
+export interface User {
+    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+    email: any,
+    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+    token: any,
+    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+    id: any
+}
+
 export interface initialTypeCardList {
     toDoList: Task[],
     isLoading: boolean,

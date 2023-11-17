@@ -9,7 +9,7 @@ import {
 import { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../hooks/hooks';
 import { Priority, Task } from '../../store/types/types';
-import { cardListSlice } from '../../store/cardListSlice/cardListSlice';
+import { cardListSlice } from '../../store/slices/cardListSlice/cardListSlice';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import NewReleasesIcon from '@mui/icons-material/NewReleases';
 import AdjustIcon from '@mui/icons-material/Adjust';
