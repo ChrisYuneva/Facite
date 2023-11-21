@@ -1,3 +1,5 @@
+import { createTheme } from '@mui/material';
+
 export function uId() {
   const hashTable: readonly string[] = [
     'a',
@@ -40,9 +42,19 @@ export function getCurrentWeek(currentDate: Date) {
 }
 
 export function getUpcomingMonday() {
-    const date = new Date();
-    const today = date.getDate();
-    const currentDay = date.getDay();
-    const newDate = date.setDate(today - currentDay + 8);
-    return new Date(newDate).getDate();
+  const date = new Date();
+  const today = date.getDate();
+  const currentDay = date.getDay();
+  const newDate = date.setDate(today - currentDay + 8);
+  return new Date(newDate).getDate();
 }
+
+const mainColor = '#24A19C';
+
+export const theme = createTheme({
+  palette: {
+    primary: {
+      main: mainColor,
+    },
+  },
+});

@@ -17,6 +17,8 @@ import LoginPage from './pages/loginPage/loginPage.tsx';
 import RegisterPage from './pages/registerPage/registerPage.tsx';
 
 import './firebase';
+import { theme } from './utils/utils.ts';
+import { ThemeProvider } from '@mui/material';
 
 
 const router = createBrowserRouter([
@@ -37,7 +39,10 @@ const router = createBrowserRouter([
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
         <Provider store={store}>
+            <ThemeProvider theme={theme}>
             <RouterProvider router={router}/>
+
+            </ThemeProvider>
         </Provider>
     </React.StrictMode>,
 );

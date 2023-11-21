@@ -1,4 +1,4 @@
-import { useAppDispatch, useAppSelector } from '../../hooks/hooks';
+import { useAppDispatch } from '../../hooks/hooks';
 import { userSlice } from '../../store/slices/userSlice/userSlice';
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 import Form from '../form/form';
@@ -6,8 +6,6 @@ import { useNavigate } from 'react-router-dom';
 
 function Login() {
   const dispatch = useAppDispatch();
-  //   const {  } = useAppSelector((state) => state.user);
-
   const { setUser } = userSlice.actions;
 
   const navigate = useNavigate();
@@ -26,9 +24,9 @@ function Login() {
     .catch(() => alert('Invalid user'));
   }
 
-  return <div>
+  return <>
     <Form title='Войти' handleClick={handleLogin}/>
-  </div>;
+  </>;
 }
 
 export default Login;

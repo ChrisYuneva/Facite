@@ -1,5 +1,7 @@
 import { useState } from 'react';
-
+import style from './style.module.css';
+import { Box, TextField } from '@mui/material';
+import ButtonCustom from '../buttonCustom/buttonCustom';
 interface FormProps {
   title: string;
   handleClick: (email: string, password: string) => void;
@@ -10,21 +12,26 @@ function Form({ title, handleClick }: FormProps) {
   const [password, setPassword] = useState('');
 
   return (
-    <div>
-      <input
-        type='email'
+    <Box className={style.form}>
+      <TextField
+        label='Email'
+        variant='outlined'
+        size='small'
         value={email}
         onChange={(event) => setEmail(event.target.value)}
-        placeholder='email'
+        // placeholder='email'
       />
-      <input
+      <TextField
         type='password'
         value={password}
+        size='small'
+        variant='outlined'
+        label='Пароль'
         onChange={(event) => setPassword(event.target.value)}
-        placeholder='password'
+        // placeholder='password'
       />
-      <button onClick={() => handleClick(email, password)}>{title}</button>
-    </div>
+      <ButtonCustom text={title} variant='contained' onClick={() => handleClick(email, password)} />
+    </Box>
   );
 }
 

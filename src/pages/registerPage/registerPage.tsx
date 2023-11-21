@@ -1,15 +1,11 @@
-import { Link, useNavigate } from 'react-router-dom';
 import Register from '../../components/register/register';
+import FormWrapper from '../../components/formWrapper/formWrapper';
 
 function RegisterPage() {
-    const navigate = useNavigate();
-
   return (
-    <div>
-      <h1>Регистрация</h1>
+    <FormWrapper title='Регистрация' btnText='Войдите' navigateTo='/login'>
       <Register />
-      <button onClick={() => navigate('/login')}>Войдите</button>
-    </div>
+    </FormWrapper>
   );
 }
 
