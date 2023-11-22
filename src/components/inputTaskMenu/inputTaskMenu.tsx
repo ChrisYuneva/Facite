@@ -14,6 +14,8 @@ import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import NewReleasesIcon from '@mui/icons-material/NewReleases';
 import AdjustIcon from '@mui/icons-material/Adjust';
 import style from './style.module.css';
+import { doc, updateDoc } from 'firebase/firestore';
+import { db } from '../../firebase';
 
 interface InputTaskMenuProps {
   visibleButton: boolean;
@@ -28,7 +30,7 @@ function InputTaskMenu({
   setCurrentTask,
   setPriority,
 }: InputTaskMenuProps) {
-  const { toDoList } = useAppSelector(state => state.cardList);
+  const { toDoList, dbId } = useAppSelector((state) => state.cardList);
 
   const dispatch = useAppDispatch();
   const { update } = cardListSlice.actions;
@@ -42,24 +44,41 @@ function InputTaskMenu({
   }
 
   function changeClassNameBtn(priority: Priority) {
-    if(priority === 'urgently') {
+    if (priority === 'urgently') {
       setClassNameBtn(`${style.urgently}`);
     }
-    if(priority === 'veryUrgently') {
+    if (priority === 'veryUrgently') {
       setClassNameBtn(`${style.veryUrgently}`);
     }
-    if(classNameBtn !== '' && priority === 'default') {
+    if (classNameBtn !== '' && priority === 'default') {
       setClassNameBtn('');
     }
   }
 
+  async function updateTaskToDB(allToDoList: Task[]) {
+    const docRef = doc(db, 'users', dbId);
+
+    await updateDoc(docRef, {
+      toDoList: allToDoList,
+    });
+  }
+
   function handlePriorityUpdate(priority: Priority) {
     if (task) {
-      if(setCurrentTask) {
+      const updateTask = { ...task, priority };
+      if (setCurrentTask) {
         setCurrentTask({ ...task, priority });
-      }
-      else {
+      } else {
         dispatch(update({ ...task, priority }));
+        updateTaskToDB(
+          toDoList.map((item) => {
+            if (item.id === updateTask.id) {
+              return updateTask;
+            }
+
+            return item;
+          })
+        );
       }
 
       changeClassNameBtn(priority);

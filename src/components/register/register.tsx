@@ -16,10 +16,9 @@ function Register() {
     const auth = getAuth();
     createUserWithEmailAndPassword(auth, email, password)
       .then(({ user }) => {
-        console.log(user);
         dispatch(
           setUser({
-            email: user.email,
+            email: user.email ?? '',
             id: user.uid,
             token: user.refreshToken,
           })

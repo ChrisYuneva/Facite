@@ -15,11 +15,8 @@ import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 import LoginPage from './pages/loginPage/loginPage.tsx';
 import RegisterPage from './pages/registerPage/registerPage.tsx';
-
-import './firebase';
 import { theme } from './utils/utils.ts';
 import { ThemeProvider } from '@mui/material';
-
 
 const router = createBrowserRouter([
     {
@@ -41,7 +38,6 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         <Provider store={store}>
             <ThemeProvider theme={theme}>
             <RouterProvider router={router}/>
-
             </ThemeProvider>
         </Provider>
     </React.StrictMode>,

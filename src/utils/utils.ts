@@ -49,7 +49,7 @@ export function getUpcomingMonday() {
   return new Date(newDate).getDate();
 }
 
-const mainColor = '#24A19C';
+export const mainColor = '#24A19C';
 
 export const theme = createTheme({
   palette: {

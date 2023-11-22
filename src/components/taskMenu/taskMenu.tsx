@@ -7,13 +7,15 @@ import {
 } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { useState } from 'react';
-import { useAppDispatch } from '../../hooks/hooks';
+import { useAppDispatch, useAppSelector } from '../../hooks/hooks';
 import { Task } from '../../store/types/types';
 import { cardListSlice } from '../../store/slices/cardListSlice/cardListSlice';
 import TaskModalWindow from '../taskModalWindow/taskModalWindow';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import InputTaskMenu from '../inputTaskMenu/inputTaskMenu';
+import { doc, updateDoc } from 'firebase/firestore';
+import { db } from '../../firebase';
 
 interface TaskMenuProps {
   task: Task;
@@ -22,6 +24,7 @@ interface TaskMenuProps {
 function TaskMenu({ task }: TaskMenuProps) {
   const dispatch = useAppDispatch();
   const { deleteTask } = cardListSlice.actions;
+  const { toDoList, dbId } = useAppSelector((state) => state.cardList);
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -31,9 +34,19 @@ function TaskMenu({ task }: TaskMenuProps) {
   function handleClick(event: React.MouseEvent<HTMLButtonElement>) {
     setAnchorEl(event.currentTarget);
   }
+  
+  async function updateTaskToDB(allToDoList: Task[]) {
+    const docRef = doc(db, 'users', dbId);
+
+    await updateDoc(docRef, {
+      toDoList: allToDoList,
+    });
+    console.log(allToDoList);
+  }
 
   function handleDelete() {
     dispatch(deleteTask(task));
+    updateTaskToDB(toDoList.filter((item) => item.id !== task.id));
     setAnchorEl(null);
   }
 

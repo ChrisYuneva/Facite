@@ -5,16 +5,14 @@ export interface initialTypeUser {
 }
 
 export interface User {
-    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-    email: any,
-    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-    token: any,
-    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-    id: any
+    email: string,
+    token: string,
+    id: string
 }
 
 export interface initialTypeCardList {
     toDoList: Task[],
+    dbId: string,
     isLoading: boolean,
     errorMessage: string,
 }

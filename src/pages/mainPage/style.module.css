@@ -2,6 +2,10 @@ body {
     margin: 0;
 }
 
+.container {
+    padding: 8px;
+}
+
 .wrap {
     display: flex;
     flex-direction: row;

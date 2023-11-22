@@ -15,9 +15,11 @@ import { cardListSlice } from '../../store/slices/cardListSlice/cardListSlice';
 import { useState } from 'react';
 import { Priority, Task } from '../../store/types/types';
 import TaskMenu from '../taskMenu/taskMenu';
-import { getCurrentWeek, getUpcomingMonday } from '../../utils/utils';
+import { getCurrentWeek, getUpcomingMonday, uId } from '../../utils/utils';
 import InputTaskMenu from '../inputTaskMenu/inputTaskMenu';
 import TaskModalWindow from '../taskModalWindow/taskModalWindow';
+import { doc, updateDoc } from 'firebase/firestore';
+import { db } from '../../firebase';
 
 interface CardListProps {
   titleList: string;
@@ -36,6 +38,7 @@ function CardList({ titleList, toDoList }: CardListProps) {
   const dispatch = useAppDispatch();
   const { add, update } = cardListSlice.actions;
   const allToDoList = useAppSelector((state) => state.cardList.toDoList);
+  const { dbId } = useAppSelector((state) => state.cardList);
 
   function getDate(titleList: string) {
     switch (titleList) {
@@ -60,7 +63,7 @@ function CardList({ titleList, toDoList }: CardListProps) {
           week: getCurrentWeek(currentDate) + 1,
           year: currentDate.getFullYear(),
         };
-        case 'Потом':
+      case 'Потом':
         return {
           day: 0,
           month: 0,
@@ -77,39 +80,67 @@ function CardList({ titleList, toDoList }: CardListProps) {
     }
   }
 
+  async function updateTaskToDB(allToDoList: Task[]) {
+    const docRef = doc(db, 'users', dbId);
+
+    await updateDoc(docRef, {
+      toDoList: allToDoList,
+    });
+    console.log(allToDoList);
+  }
+
   function addTask() {
     if (content === '') {
       setAlert(true);
     } else {
+      const newItem = {
+        id: uId(),
+        content,
+        priority,
+        fulfillment: false,
+        date: getDate(titleList),
+      };
       setAlert(false);
-      dispatch(
-        add({
-          content,
-          priority,
-          fulfillment: false,
-          date: getDate(titleList),
-        })
-      );
+      dispatch(add(newItem));
+      updateTaskToDB([...allToDoList, newItem]);
       setContent('');
       setPriority('default');
     }
   }
 
   function updateTaskFulfillment(task: Task) {
-    dispatch(update({ ...task, fulfillment: !task.fulfillment }));
+    const updateTask = { ...task, fulfillment: !task.fulfillment };
+    dispatch(update(updateTask));
+    updateTaskToDB(
+      allToDoList.map((item) => {
+        if (item.id === updateTask.id) {
+          return updateTask;
+        }
+
+        return item;
+      })
+    );
   }
 
   function onDropTask(event: React.DragEvent<HTMLDivElement>) {
     const currentId = event.dataTransfer.getData('id');
     const currentToDo = allToDoList.find((el) => el.id === currentId);
+    const updateTask = {
+      id: currentToDo?.id,
+      content: currentToDo?.content ?? '',
+      priority: currentToDo?.priority ?? 'default',
+      fulfillment: currentToDo?.fulfillment ?? false,
+      date: getDate(event.currentTarget.id),
+    };
 
-    dispatch(
-      update({
-        id: currentToDo?.id,
-        content: currentToDo?.content ?? '',
-        priority: currentToDo?.priority ?? 'default',
-        fulfillment: currentToDo?.fulfillment ?? false,
-        date: getDate(event.currentTarget.id),
+    dispatch(update(updateTask));
+    updateTaskToDB(
+      allToDoList.map((item) => {
+        if (item.id === updateTask.id) {
+          return updateTask;
+        }
+
+        return item;
       })
     );
 
@@ -138,7 +169,9 @@ function CardList({ titleList, toDoList }: CardListProps) {
   }
 
   function handleUpdate(event: React.MouseEvent<HTMLSpanElement, MouseEvent>) {
-    setCurrentTask(toDoList.find(item => item.id === event.target.id) ?? null);
+    setCurrentTask(
+      toDoList.find((item) => item.id === event.target.id) ?? null
+    );
     setOpenModal(true);
   }
 
@@ -204,15 +237,17 @@ function CardList({ titleList, toDoList }: CardListProps) {
             );
           })}
         </FormGroup>
-        <Button onClick={addTask}>Добавить задачу</Button>
+        <Button onClick={addTask} variant='contained'>
+          Добавить задачу
+        </Button>
       </Card>
-      {
-        currentTask && <TaskModalWindow
+      {currentTask && (
+        <TaskModalWindow
           task={currentTask}
           open={openModal}
           onClose={handleClose}
         />
-      }
+      )}
     </Grid>
   );
 }

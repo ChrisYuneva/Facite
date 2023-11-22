@@ -15,12 +15,12 @@ function Login() {
     signInWithEmailAndPassword(auth, email, password)
     .then(({user}) => {
         dispatch(setUser({
-            email: user.email,
+            email: user.email ?? '',
             id: user.uid,
             token: user.refreshToken
         }));
-        navigate('/');
     })
+    .then(() => navigate('/'))
     .catch(() => alert('Invalid user'));
   }
 
