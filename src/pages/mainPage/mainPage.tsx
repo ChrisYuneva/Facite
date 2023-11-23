@@ -45,6 +45,11 @@ function MainPage() {
   }
 
   function dateCheck(toDoList: Task[]) {
+    // const list = toDoList.filter((item) => {
+    //   if(item.date.day <= today.day && item.fulfillment) {
+        
+    //   }
+    // });
     return toDoList.map((item) => {
       if (item.date.day < today.day && item.date.month === today.month) {
         return {

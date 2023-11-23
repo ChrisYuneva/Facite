@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import style from './style.module.css';
 import { Box, TextField } from '@mui/material';
 import ButtonCustom from '../buttonCustom/buttonCustom';
+import useKeypress from '../../hooks/useKeyPress';
 interface FormProps {
   title: string;
   handleClick: (email: string, password: string) => void;
@@ -11,6 +12,8 @@ function Form({ title, handleClick }: FormProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
+  useKeypress('Enter', () => handleClick(email, password));
+
   return (
     <Box className={style.form}>
       <TextField
@@ -19,7 +22,6 @@ function Form({ title, handleClick }: FormProps) {
         size='small'
         value={email}
         onChange={(event) => setEmail(event.target.value)}
-        // placeholder='email'
       />
       <TextField
         type='password'
@@ -28,9 +30,12 @@ function Form({ title, handleClick }: FormProps) {
         variant='outlined'
         label='Пароль'
         onChange={(event) => setPassword(event.target.value)}
-        // placeholder='password'
       />
-      <ButtonCustom text={title} variant='contained' onClick={() => handleClick(email, password)} />
+      <ButtonCustom 
+        text={title} 
+        variant='contained' 
+        onClick={() => handleClick(email, password)} 
+        />
     </Box>
   );
 }

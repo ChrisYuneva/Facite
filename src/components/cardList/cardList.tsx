@@ -13,20 +13,20 @@ import style from './style.module.css';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 import { cardListSlice } from '../../store/slices/cardListSlice/cardListSlice';
 import { useState } from 'react';
-import { Priority, Task } from '../../store/types/types';
+import { Priority, Task } from '../../store/slices/cardListSlice/types';
 import TaskMenu from '../taskMenu/taskMenu';
-import { getCurrentWeek, getUpcomingMonday } from '../../utils/utilsDate';
+import { getDateList } from '../../utils/utilsDate';
 import { uId } from '../../utils/utilsUId';
 import InputTaskMenu from '../inputTaskMenu/inputTaskMenu';
 import TaskModalWindow from '../taskModalWindow/taskModalWindow';
 import { updateTaskToDB } from '../../firebase/firebase';
+import ButtonCustom from '../buttonCustom/buttonCustom';
+import useKeypress from '../../hooks/useKeyPress';
 
 interface CardListProps {
   titleList: string;
   toDoList: Task[];
 }
-
-const currentDate = new Date();
 
 function CardList({ titleList, toDoList }: CardListProps) {
   const [content, setContent] = useState<string>('');
@@ -40,45 +40,7 @@ function CardList({ titleList, toDoList }: CardListProps) {
   const allToDoList = useAppSelector((state) => state.cardList.toDoList);
   const { dbId } = useAppSelector((state) => state.cardList);
 
-  function getDate(titleList: string) {
-    switch (titleList) {
-      case 'Сегодня':
-        return {
-          day: currentDate.getDate(),
-          month: currentDate.getMonth() + 1,
-          week: getCurrentWeek(currentDate),
-          year: currentDate.getFullYear(),
-        };
-      case 'Завтра':
-        return {
-          day: currentDate.getDate() + 1,
-          month: currentDate.getMonth() + 1,
-          week: getCurrentWeek(currentDate),
-          year: currentDate.getFullYear(),
-        };
-      case 'На следующей неделе':
-        return {
-          day: getUpcomingMonday(),
-          month: currentDate.getMonth() + 1,
-          week: getCurrentWeek(currentDate) + 1,
-          year: currentDate.getFullYear(),
-        };
-      case 'Потом':
-        return {
-          day: 0,
-          month: 0,
-          week: 0,
-          year: 0,
-        };
-      default:
-        return {
-          day: 0,
-          month: 0,
-          week: 0,
-          year: 0,
-        };
-    }
-  }
+  
 
   function addTask() {
     if (content === '') {
@@ -89,7 +51,7 @@ function CardList({ titleList, toDoList }: CardListProps) {
         content,
         priority,
         fulfillment: false,
-        date: getDate(titleList),
+        date: getDateList(titleList),
       };
       setAlert(false);
       dispatch(add(newItem));
@@ -98,6 +60,8 @@ function CardList({ titleList, toDoList }: CardListProps) {
       setPriority('default');
     }
   }
+
+  useKeypress('Enter', addTask);
 
   function updateTaskFulfillment(task: Task) {
     const updateTask = { ...task, fulfillment: !task.fulfillment };
@@ -121,7 +85,7 @@ function CardList({ titleList, toDoList }: CardListProps) {
       content: currentToDo?.content ?? '',
       priority: currentToDo?.priority ?? 'default',
       fulfillment: currentToDo?.fulfillment ?? false,
-      date: getDate(event.currentTarget.id),
+      date: getDateList(event.currentTarget.id),
     };
 
     dispatch(update(updateTask));
@@ -228,9 +192,7 @@ function CardList({ titleList, toDoList }: CardListProps) {
             );
           })}
         </FormGroup>
-        <Button onClick={addTask} variant='contained'>
-          Добавить задачу
-        </Button>
+        <ButtonCustom onClick={addTask} variant='contained' text='Добавить задачу' />
       </Card>
       {currentTask && (
         <TaskModalWindow
