@@ -10,15 +10,16 @@ import {
   Typography,
 } from '@mui/material';
 import style from './style.module.css';
-import { useAppDispatch, useAppSelector } from '../../hooks/hooks';
+import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 import { cardListSlice } from '../../store/slices/cardListSlice/cardListSlice';
 import { useState } from 'react';
 import { Priority, Task } from '../../store/types/types';
 import TaskMenu from '../taskMenu/taskMenu';
-import { getCurrentWeek, getUpcomingMonday, uId } from '../../utils/utils';
+import { getCurrentWeek, getUpcomingMonday } from '../../utils/utilsDate';
+import { uId } from '../../utils/utilsUId';
 import InputTaskMenu from '../inputTaskMenu/inputTaskMenu';
 import TaskModalWindow from '../taskModalWindow/taskModalWindow';
-import { updateTaskToDB } from '../../api/firebase';
+import { updateTaskToDB } from '../../firebase/firebase';
 
 interface CardListProps {
   titleList: string;

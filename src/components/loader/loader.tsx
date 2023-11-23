@@ -1,5 +1,5 @@
 import { Backdrop, CircularProgress } from '@mui/material';
-import { mainColor } from '../../utils/utils';
+import { mainColor } from '../../utils/utilsTheme';
 
 type LoadingProps = {
   isLoading: boolean;

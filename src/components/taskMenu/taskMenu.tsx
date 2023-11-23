@@ -7,14 +7,14 @@ import {
 } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { useState } from 'react';
-import { useAppDispatch, useAppSelector } from '../../hooks/hooks';
+import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 import { Task } from '../../store/types/types';
 import { cardListSlice } from '../../store/slices/cardListSlice/cardListSlice';
 import TaskModalWindow from '../taskModalWindow/taskModalWindow';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import InputTaskMenu from '../inputTaskMenu/inputTaskMenu';
-import { updateTaskToDB } from '../../api/firebase';
+import { updateTaskToDB } from '../../firebase/firebase';
 
 interface TaskMenuProps {
   task: Task;

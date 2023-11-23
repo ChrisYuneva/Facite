@@ -15,7 +15,7 @@ import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 import LoginPage from './pages/loginPage/loginPage.tsx';
 import RegisterPage from './pages/registerPage/registerPage.tsx';
-import { theme } from './utils/utils.ts';
+import { theme } from './utils/utilsTheme.ts';
 import { ThemeProvider } from '@mui/material';
 
 const router = createBrowserRouter([

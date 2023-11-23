@@ -6,12 +6,12 @@ import {
   TextField,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { useAppDispatch, useAppSelector } from '../../hooks/hooks';
+import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 import { cardListSlice } from '../../store/slices/cardListSlice/cardListSlice';
 import { Task } from '../../store/types/types';
 import style from './style.module.css';
 import InputTaskMenu from '../inputTaskMenu/inputTaskMenu';
-import { updateTaskToDB } from '../../api/firebase';
+import { updateTaskToDB } from '../../firebase/firebase';
 
 export interface TaskModalWindowProps {
   open: boolean;

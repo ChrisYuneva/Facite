@@ -1,19 +1,26 @@
 import CardList from '../../components/cardList/cardList';
 import { Grid } from '@mui/material';
 import style from './style.module.css';
-import { useAppDispatch, useAppSelector } from '../../hooks/hooks';
-import { useEffect, useState } from 'react';
-import { DateFormat, Task } from '../../store/types/types';
-import { deleteCookie, getCurrentWeek } from '../../utils/utils';
+import { useAppDispatch, useAppSelector } from '../../hooks/redux';
+import { useEffect } from 'react';
+import { DateFormat, Task } from '../../store/slices/cardListSlice/types';
+import { deleteCookie } from '../../utils/utilsCookie';
+import { getCurrentWeek } from '../../utils/utilsDate';
 import { Navigate } from 'react-router-dom';
 import useAuth from '../../hooks/useAuth';
 import { collection, addDoc, getDocs, where, query } from 'firebase/firestore';
 import Loader from '../../components/loader/loader';
-import { db } from '../../firebase';
+import { db } from '../../firebase/';
 import { cardListSlice } from '../../store/slices/cardListSlice/cardListSlice';
-import { updateTaskToDB } from '../../api/firebase';
+import { updateTaskToDB } from '../../firebase/firebase';
 
 const currentDate = new Date();
+const today: DateFormat = {
+  day: currentDate.getDate(),
+  month: currentDate.getMonth() + 1,
+  week: getCurrentWeek(currentDate),
+  year: currentDate.getFullYear(),
+};
 
 function MainPage() {
   const { isLoading, toDoList, dbId } = useAppSelector((state) => state.cardList);
@@ -21,19 +28,12 @@ function MainPage() {
 
   const dispatch = useAppDispatch();
 
-  const [today, setToday] = useState<DateFormat>({
-    day: currentDate.getDate(),
-    month: currentDate.getMonth() + 1,
-    week: getCurrentWeek(currentDate),
-    year: currentDate.getFullYear(),
-  });
-
   const { isAuth, email, id, token } = useAuth();
 
   async function addDB() {
     try {
       if (id !== '') {
-        const docRef = await addDoc(collection(db, 'users'), {
+        await addDoc(collection(db, 'users'), {
           uid: id,
           toDoList: [],
         });
@@ -96,10 +96,7 @@ function MainPage() {
     }
   }
 
-  
-
   function logout() {
-    // dispatch(removeUser());
     deleteCookie('id');
     deleteCookie('email');
     deleteCookie('token');
@@ -108,12 +105,6 @@ function MainPage() {
 
   useEffect(() => {
     dispatch(loading());
-    setToday({
-      day: currentDate.getDate(),
-      month: currentDate.getMonth() + 1,
-      week: getCurrentWeek(currentDate),
-      year: currentDate.getFullYear(),
-    });
     querySnapshot();
   }, []);
 

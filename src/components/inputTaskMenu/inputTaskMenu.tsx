@@ -7,14 +7,14 @@ import {
   Typography,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { useAppDispatch, useAppSelector } from '../../hooks/hooks';
+import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 import { Priority, Task } from '../../store/types/types';
 import { cardListSlice } from '../../store/slices/cardListSlice/cardListSlice';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import NewReleasesIcon from '@mui/icons-material/NewReleases';
 import AdjustIcon from '@mui/icons-material/Adjust';
 import style from './style.module.css';
-import { updateTaskToDB } from '../../api/firebase';
+import { updateTaskToDB } from '../../firebase/firebase';
 
 interface InputTaskMenuProps {
   visibleButton: boolean;

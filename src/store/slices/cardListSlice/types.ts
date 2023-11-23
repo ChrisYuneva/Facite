@@ -1,15 +1,3 @@
-export interface initialTypeUser {
-    email: string,
-    token: string,
-    id: string
-}
-
-export interface User {
-    email: string,
-    token: string,
-    id: string
-}
-
 export interface initialTypeCardList {
     toDoList: Task[],
     dbId: string,

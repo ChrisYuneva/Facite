@@ -1,5 +1,5 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
-import {initialTypeCardList, Task} from '../../types/types';
+import {initialTypeCardList, Task} from './types';
 
 const initialState: initialTypeCardList = {
     toDoList: [],
