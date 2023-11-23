@@ -11,8 +11,7 @@ import { cardListSlice } from '../../store/slices/cardListSlice/cardListSlice';
 import { Task } from '../../store/types/types';
 import style from './style.module.css';
 import InputTaskMenu from '../inputTaskMenu/inputTaskMenu';
-import { doc, updateDoc } from 'firebase/firestore';
-import { db } from '../../firebase';
+import { updateTaskToDB } from '../../api/firebase';
 
 export interface TaskModalWindowProps {
   open: boolean;
@@ -30,14 +29,6 @@ function TaskModalWindow({ open, task, onClose }: TaskModalWindowProps) {
     setCurrentTask(task);
   }, [task]);
 
-  async function updateTaskToDB(allToDoList: Task[]) {
-    const docRef = doc(db, 'users', dbId);
-
-    await updateDoc(docRef, {
-      toDoList: allToDoList,
-    });
-  }
-
   function save() {
     if (currentTask) {
       dispatch(update(currentTask));
@@ -47,7 +38,7 @@ function TaskModalWindow({ open, task, onClose }: TaskModalWindowProps) {
         }
   
         return item;
-      }));
+      }), dbId);
     }
     setCurrentTask(null);
     onClose();
@@ -55,7 +46,7 @@ function TaskModalWindow({ open, task, onClose }: TaskModalWindowProps) {
 
   function handleDelete() {
     dispatch(deleteTask(task));
-    updateTaskToDB(toDoList.filter((item) => item.id !== task.id));
+    updateTaskToDB(toDoList.filter((item) => item.id !== task.id), dbId);
     setCurrentTask(null);
     onClose();
   }

@@ -14,8 +14,7 @@ import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import NewReleasesIcon from '@mui/icons-material/NewReleases';
 import AdjustIcon from '@mui/icons-material/Adjust';
 import style from './style.module.css';
-import { doc, updateDoc } from 'firebase/firestore';
-import { db } from '../../firebase';
+import { updateTaskToDB } from '../../api/firebase';
 
 interface InputTaskMenuProps {
   visibleButton: boolean;
@@ -55,14 +54,6 @@ function InputTaskMenu({
     }
   }
 
-  async function updateTaskToDB(allToDoList: Task[]) {
-    const docRef = doc(db, 'users', dbId);
-
-    await updateDoc(docRef, {
-      toDoList: allToDoList,
-    });
-  }
-
   function handlePriorityUpdate(priority: Priority) {
     if (task) {
       const updateTask = { ...task, priority };
@@ -77,8 +68,8 @@ function InputTaskMenu({
             }
 
             return item;
-          })
-        );
+          }), 
+          dbId);
       }
 
       changeClassNameBtn(priority);

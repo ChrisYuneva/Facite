@@ -3,35 +3,32 @@ import { Grid } from '@mui/material';
 import style from './style.module.css';
 import { useAppDispatch, useAppSelector } from '../../hooks/hooks';
 import { useEffect, useState } from 'react';
-import { DateFormat } from '../../store/types/types';
-import { getCurrentWeek } from '../../utils/utils';
+import { DateFormat, Task } from '../../store/types/types';
+import { deleteCookie, getCurrentWeek } from '../../utils/utils';
 import { Navigate } from 'react-router-dom';
 import useAuth from '../../hooks/useAuth';
-import { userSlice } from '../../store/slices/userSlice/userSlice';
 import { collection, addDoc, getDocs, where, query } from 'firebase/firestore';
 import Loader from '../../components/loader/loader';
 import { db } from '../../firebase';
 import { cardListSlice } from '../../store/slices/cardListSlice/cardListSlice';
+import { updateTaskToDB } from '../../api/firebase';
 
 const currentDate = new Date();
 
 function MainPage() {
-  const { isLoading, toDoList } = useAppSelector(
-    (state) => state.cardList
-  );
-  const { removeUser } = userSlice.actions;
+  const { isLoading, toDoList, dbId } = useAppSelector((state) => state.cardList);
   const { loading, getToDoList, setId, resetToDoList } = cardListSlice.actions;
 
   const dispatch = useAppDispatch();
 
   const [today, setToday] = useState<DateFormat>({
-    day: 0,
-    month: 0,
-    week: 0,
-    year: 0,
+    day: currentDate.getDate(),
+    month: currentDate.getMonth() + 1,
+    week: getCurrentWeek(currentDate),
+    year: currentDate.getFullYear(),
   });
 
-  const { isAuth, email, id } = useAuth();
+  const { isAuth, email, id, token } = useAuth();
 
   async function addDB() {
     try {
@@ -40,11 +37,47 @@ function MainPage() {
           uid: id,
           toDoList: [],
         });
-        console.log('Document written with ID: ', docRef.id);
+        // console.log('Document written with ID: ', docRef.id);
       }
     } catch (e) {
       console.error('Error adding document: ', e);
     }
+  }
+
+  function dateCheck(toDoList: Task[]) {
+    return toDoList.map((item) => {
+      if (item.date.day < today.day && item.date.month === today.month) {
+        return {
+          ...item,
+          date: {
+            ...item.date,
+            day: today.day,
+          },
+        };
+      }
+      if (item.date.month < today.month) {
+        return {
+          ...item,
+          date: {
+            ...item.date,
+            day: today.day,
+            month: today.month,
+          },
+        };
+      }
+      if (item.date.week < today.week) {
+        return {
+          ...item,
+          date: {
+            ...item.date,
+            day: today.day,
+            month: today.month,
+            week: today.week,
+          },
+        };
+      }
+      return item;
+    });
   }
 
   async function querySnapshot() {
@@ -53,13 +86,24 @@ function MainPage() {
     );
     if (data.docs.length) {
       data.forEach((doc) => {
-        dispatch(getToDoList(doc.get('toDoList')));
+        const data = doc.get('toDoList');
+        dispatch(getToDoList(dateCheck(data)));
         dispatch(setId(doc.id));
       });
     } else {
       addDB();
       querySnapshot();
     }
+  }
+
+  
+
+  function logout() {
+    // dispatch(removeUser());
+    deleteCookie('id');
+    deleteCookie('email');
+    deleteCookie('token');
+    dispatch(resetToDoList());
   }
 
   useEffect(() => {
@@ -73,10 +117,9 @@ function MainPage() {
     querySnapshot();
   }, []);
 
-  function logout() {
-    dispatch(removeUser());
-    dispatch(resetToDoList());
-  }
+  useEffect(() => {
+    updateTaskToDB(toDoList, dbId);
+  }, [toDoList]);
 
   return (
     <>

@@ -18,8 +18,7 @@ import TaskMenu from '../taskMenu/taskMenu';
 import { getCurrentWeek, getUpcomingMonday, uId } from '../../utils/utils';
 import InputTaskMenu from '../inputTaskMenu/inputTaskMenu';
 import TaskModalWindow from '../taskModalWindow/taskModalWindow';
-import { doc, updateDoc } from 'firebase/firestore';
-import { db } from '../../firebase';
+import { updateTaskToDB } from '../../api/firebase';
 
 interface CardListProps {
   titleList: string;
@@ -80,15 +79,6 @@ function CardList({ titleList, toDoList }: CardListProps) {
     }
   }
 
-  async function updateTaskToDB(allToDoList: Task[]) {
-    const docRef = doc(db, 'users', dbId);
-
-    await updateDoc(docRef, {
-      toDoList: allToDoList,
-    });
-    console.log(allToDoList);
-  }
-
   function addTask() {
     if (content === '') {
       setAlert(true);
@@ -102,7 +92,7 @@ function CardList({ titleList, toDoList }: CardListProps) {
       };
       setAlert(false);
       dispatch(add(newItem));
-      updateTaskToDB([...allToDoList, newItem]);
+      updateTaskToDB([...allToDoList, newItem], dbId);
       setContent('');
       setPriority('default');
     }
@@ -118,8 +108,8 @@ function CardList({ titleList, toDoList }: CardListProps) {
         }
 
         return item;
-      })
-    );
+      }),
+      dbId);
   }
 
   function onDropTask(event: React.DragEvent<HTMLDivElement>) {
@@ -141,8 +131,8 @@ function CardList({ titleList, toDoList }: CardListProps) {
         }
 
         return item;
-      })
-    );
+      }), 
+    dbId);
 
     event.dataTransfer.clearData();
   }

@@ -14,8 +14,7 @@ import TaskModalWindow from '../taskModalWindow/taskModalWindow';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import InputTaskMenu from '../inputTaskMenu/inputTaskMenu';
-import { doc, updateDoc } from 'firebase/firestore';
-import { db } from '../../firebase';
+import { updateTaskToDB } from '../../api/firebase';
 
 interface TaskMenuProps {
   task: Task;
@@ -34,23 +33,10 @@ function TaskMenu({ task }: TaskMenuProps) {
   function handleClick(event: React.MouseEvent<HTMLButtonElement>) {
     setAnchorEl(event.currentTarget);
   }
-  
-  async function updateTaskToDB(allToDoList: Task[]) {
-    const docRef = doc(db, 'users', dbId);
-
-    await updateDoc(docRef, {
-      toDoList: allToDoList,
-    });
-    console.log(allToDoList);
-  }
 
   function handleDelete() {
     dispatch(deleteTask(task));
-    updateTaskToDB(toDoList.filter((item) => item.id !== task.id));
-    setAnchorEl(null);
-  }
-
-  function handlePriority() {
+    updateTaskToDB(toDoList.filter((item) => item.id !== task.id), dbId);
     setAnchorEl(null);
   }
 

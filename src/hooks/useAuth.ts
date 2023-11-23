@@ -1,16 +1,20 @@
 // позволяет из люьой точки приложения узнавать, авторизован пользователь или нет, и получать его данные
 
-import { useAppSelector } from './hooks';
+import { getCookie } from '../utils/utils';
 
 function useAuth() {
-    const { email, id, token } = useAppSelector((state) => state.user);
+//   const { email, token } = useAppSelector((state) => state.user);
 
-    return {
-        isAuth: !!email,
-        email,
-        token,
-        id
-    };
+  const id = getCookie('id');
+  const email = getCookie('email');
+  const token = getCookie('token');
+
+  return {
+    isAuth: !!id,
+    email,
+    token,
+    id,
+  };
 }
 
 export default useAuth;
