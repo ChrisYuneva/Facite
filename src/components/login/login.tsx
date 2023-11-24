@@ -8,23 +8,20 @@ function Login() {
   function handleLogin(email: string, password: string) {
     const auth = getAuth();
     signInWithEmailAndPassword(auth, email, password)
-    .then(({user}) => {
-        // dispatch(setUser({
-        //     email: user.email ?? '',
-        //     id: user.uid,
-        //     token: user.refreshToken
-        // }));
+      .then(({ user }) => {
         document.cookie = `id=${user.uid}`;
         document.cookie = `email=${user.email}`;
         document.cookie = `token=${user.refreshToken}`;
-    })
-    .then(() => navigate('/'))
-    .catch(() => alert('Invalid user'));
+      })
+      .then(() => navigate('/'))
+      .catch(() => alert('Invalid user'));
   }
 
-  return <>
-    <Form title='Войти' handleClick={handleLogin}/>
-  </>;
+  return (
+    <>
+      <Form title='Войти' handleClick={handleLogin} />
+    </>
+  );
 }
 
 export default Login;

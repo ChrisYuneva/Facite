@@ -8,7 +8,7 @@ import {
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
-import { Priority, Task } from '../../store/types/types';
+import { Priority, Task } from '../../store/slices/cardListSlice/types';
 import { cardListSlice } from '../../store/slices/cardListSlice/cardListSlice';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import NewReleasesIcon from '@mui/icons-material/NewReleases';

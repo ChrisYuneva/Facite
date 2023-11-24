@@ -6,6 +6,7 @@ function LoginPage() {
     <FormWrapper
       title='Авторизация'
       btnText='Зарегистрируйтесь'
+      // btnClass=''
       navigateTo='/register'
     >
       <Login />

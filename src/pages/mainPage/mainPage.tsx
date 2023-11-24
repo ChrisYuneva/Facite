@@ -5,7 +5,7 @@ import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 import { useEffect } from 'react';
 import { DateFormat, Task } from '../../store/slices/cardListSlice/types';
 import { deleteCookie } from '../../utils/utilsCookie';
-import { getCurrentWeek } from '../../utils/utilsDate';
+import { getCurrentWeek, today } from '../../utils/utilsDate';
 import { Navigate } from 'react-router-dom';
 import useAuth from '../../hooks/useAuth';
 import { collection, addDoc, getDocs, where, query } from 'firebase/firestore';
@@ -13,14 +13,6 @@ import Loader from '../../components/loader/loader';
 import { db } from '../../firebase/';
 import { cardListSlice } from '../../store/slices/cardListSlice/cardListSlice';
 import { updateTaskToDB } from '../../firebase/firebase';
-
-const currentDate = new Date();
-const today: DateFormat = {
-  day: currentDate.getDate(),
-  month: currentDate.getMonth() + 1,
-  week: getCurrentWeek(currentDate),
-  year: currentDate.getFullYear(),
-};
 
 function MainPage() {
   const { isLoading, toDoList, dbId } = useAppSelector((state) => state.cardList);
@@ -45,12 +37,8 @@ function MainPage() {
   }
 
   function dateCheck(toDoList: Task[]) {
-    // const list = toDoList.filter((item) => {
-    //   if(item.date.day <= today.day && item.fulfillment) {
-        
-    //   }
-    // });
-    return toDoList.map((item) => {
+    const list = toDoList.filter((item) => !item.dateFullfilment || (item.dateFullfilment.day === today.day && item.dateFullfilment.month === today.month));
+    return list.map((item) => {
       if (item.date.day < today.day && item.date.month === today.month) {
         return {
           ...item,

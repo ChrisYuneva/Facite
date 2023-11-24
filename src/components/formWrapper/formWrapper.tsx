@@ -10,24 +10,31 @@ interface FormWrapperProps {
   children: React.ReactNode;
 }
 
-function FormWrapper({ title, btnText, navigateTo, children }: FormWrapperProps) {
+function FormWrapper({
+  title,
+  btnText,
+  navigateTo,
+  children,
+}: FormWrapperProps) {
   const navigate = useNavigate();
 
   return (
     <Box className={style.container}>
-<Grid container alignItems='center' className={style.wrap}>
-      <Card className={style.card}>
-        <Typography variant='h4' textAlign='center'>{title}</Typography>
-        {children}
-        <ButtonCustom
-          text={btnText}
-          variant='outlined'
-          onClick={() => navigate(navigateTo)}
-        />
-      </Card>
-    </Grid>
+      <Grid container alignItems='center' className={style.wrap}>
+        <Card className={style.card}>
+          <Typography variant='h4' textAlign='center' className={style.title}>
+            {title}
+          </Typography>
+          {children}
+          <ButtonCustom
+            text={btnText}
+            variant='outlined'
+            className={style.btn}
+            onClick={() => navigate(navigateTo)}
+          />
+        </Card>
+      </Grid>
     </Box>
-    
   );
 }
 

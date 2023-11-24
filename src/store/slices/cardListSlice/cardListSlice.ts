@@ -32,6 +32,7 @@ export const cardListSlice = createSlice({
                     item.date = action.payload.date;
                     item.fulfillment = action.payload.fulfillment;
                     item.priority = action.payload.priority;
+                    item.dateFullfilment = action.payload.dateFullfilment;
                 }
             });
             state.toDoList.sort((a, b) => +a.fulfillment - +b.fulfillment);

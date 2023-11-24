@@ -27,7 +27,6 @@
     margin-top: 8px;
     display: flex;
     justify-content: space-between;
-    /* background-color: #F2F9F9; */
 }
 
 .taskCardContent {
@@ -48,4 +47,10 @@
 
 .veryUrgently {
     background-color: #ff00003b !important;
+}
+
+.btn {
+    width: 95%;
+    margin-top: 8px !important;
+    margin-bottom: 8px !important;
 }

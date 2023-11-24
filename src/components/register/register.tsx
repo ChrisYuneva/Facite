@@ -19,9 +19,9 @@ function Register() {
   }
 
   return (
-    <div>
+    <>
       <Form title='Зарегистрироваться' handleClick={handleRegister} />
-    </div>
+    </>
   );
 }
 

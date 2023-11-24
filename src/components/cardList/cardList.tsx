@@ -1,5 +1,4 @@
 import {
-  Button,
   Card,
   CardHeader,
   Checkbox,
@@ -15,7 +14,7 @@ import { cardListSlice } from '../../store/slices/cardListSlice/cardListSlice';
 import { useState } from 'react';
 import { Priority, Task } from '../../store/slices/cardListSlice/types';
 import TaskMenu from '../taskMenu/taskMenu';
-import { getDateList } from '../../utils/utilsDate';
+import { getDateList, today } from '../../utils/utilsDate';
 import { uId } from '../../utils/utilsUId';
 import InputTaskMenu from '../inputTaskMenu/inputTaskMenu';
 import TaskModalWindow from '../taskModalWindow/taskModalWindow';
@@ -40,8 +39,6 @@ function CardList({ titleList, toDoList }: CardListProps) {
   const allToDoList = useAppSelector((state) => state.cardList.toDoList);
   const { dbId } = useAppSelector((state) => state.cardList);
 
-  
-
   function addTask() {
     if (content === '') {
       setAlert(true);
@@ -64,7 +61,13 @@ function CardList({ titleList, toDoList }: CardListProps) {
   useKeypress('Enter', addTask);
 
   function updateTaskFulfillment(task: Task) {
-    const updateTask = { ...task, fulfillment: !task.fulfillment };
+    const updateTask: Task = {
+      ...task,
+      fulfillment: !task.fulfillment,
+      dateFullfilment: !task.fulfillment
+      ? today
+      : undefined 
+    };
     dispatch(update(updateTask));
     updateTaskToDB(
       allToDoList.map((item) => {
@@ -192,7 +195,7 @@ function CardList({ titleList, toDoList }: CardListProps) {
             );
           })}
         </FormGroup>
-        <ButtonCustom onClick={addTask} variant='contained' text='Добавить задачу' />
+        <ButtonCustom onClick={addTask} variant='contained' text='Добавить задачу' className={style.btn}/>
       </Card>
       {currentTask && (
         <TaskModalWindow

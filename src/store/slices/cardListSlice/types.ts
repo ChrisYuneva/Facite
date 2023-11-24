@@ -10,7 +10,8 @@ export interface Task {
     content: string,
     priority: Priority,
     fulfillment: boolean,
-    date: DateFormat
+    date: DateFormat,
+    dateFullfilment?: DateFormat
 }
 
 export type Priority = 'default' |'urgently' | 'veryUrgently'

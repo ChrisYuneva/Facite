@@ -1,3 +1,5 @@
+import { DateFormat } from '../store/slices/cardListSlice/types';
+
 const currentDate = new Date();
 
 export function getCurrentWeek(currentDate: Date) {
@@ -15,6 +17,13 @@ export function getUpcomingMonday() {
   const newDate = date.setDate(today - currentDay + 8);
   return new Date(newDate).getDate();
 }
+
+export const today: DateFormat = {
+  day: currentDate.getDate(),
+  month: currentDate.getMonth() + 1,
+  week: getCurrentWeek(currentDate),
+  year: currentDate.getFullYear(),
+};
 
 export function getDateList(titleList: string) {
   switch (titleList) {
