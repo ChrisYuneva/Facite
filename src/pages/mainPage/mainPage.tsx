@@ -3,9 +3,9 @@ import { Grid } from '@mui/material';
 import style from './style.module.css';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 import { useEffect } from 'react';
-import { DateFormat, Task } from '../../store/slices/cardListSlice/types';
-import { deleteCookie } from '../../utils/utilsCookie';
-import { getCurrentWeek, today } from '../../utils/utilsDate';
+import { Task } from '../../store/slices/cardListSlice/types';
+import { deleteCookie, getCookie } from '../../utils/utilsCookie';
+import { today } from '../../utils/utilsDate';
 import { Navigate } from 'react-router-dom';
 import useAuth from '../../hooks/useAuth';
 import { collection, addDoc, getDocs, where, query } from 'firebase/firestore';
@@ -91,6 +91,7 @@ function MainPage() {
 
   function logout() {
     deleteCookie('id');
+    deleteCookie('name');
     deleteCookie('email');
     deleteCookie('token');
     dispatch(resetToDoList());
@@ -132,7 +133,7 @@ function MainPage() {
               toDoList={toDoList.filter((item) => item.date.day === 0)}
             />
           </Grid>
-          <button onClick={logout}>Выйти {email}</button>
+          <button onClick={logout}>Выйти {getCookie('name')}</button>
         </Grid>
       ) : (
         <Navigate to='/login' />

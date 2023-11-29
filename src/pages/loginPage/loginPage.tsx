@@ -2,9 +2,12 @@ import FormWrapper from '../../components/formWrapper/formWrapper';
 import { useNavigate } from 'react-router-dom';
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 import Form from '../../components/form/form';
+import { useState } from 'react';
+import AlertCustom from '../../components/alert/alert';
 
 function LoginPage() {
   const navigate = useNavigate();
+  const [alert, setAlert] = useState('');
 
   function handleLogin(email: string, password: string) {
     const auth = getAuth();
@@ -13,9 +16,10 @@ function LoginPage() {
         document.cookie = `id=${user.uid}`;
         document.cookie = `email=${user.email}`;
         document.cookie = `token=${user.refreshToken}`;
+        document.cookie = `name=${user.displayName}`;
       })
       .then(() => navigate('/'))
-      .catch(() => alert('Invalid user'));
+      .catch(() => setAlert('Такого пользователя не существует. Пожалуйста, проверьте данные.'));
   }
 
   return (
@@ -24,6 +28,9 @@ function LoginPage() {
       btnText='Зарегистрируйтесь'
       navigateTo='/register'
     >
+      {
+        alert && <AlertCustom alert={alert} />
+      }
       <Form title='Войти' handleClick={handleLogin} />
     </FormWrapper>
   );

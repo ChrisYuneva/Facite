@@ -21,7 +21,7 @@ const passwordRegex = /^((?=\S*?[A-Z])(?=\S*?[a-z])(?=\S*?[0-9]).{6,})\S$/;
 
 interface FormProps {
   title: string;
-  handleClick: (email: string, password: string) => void;
+  handleClick: (email: string, password: string, name?: string) => void;
 }
 
 function Form({ title, handleClick }: FormProps) {
@@ -29,15 +29,16 @@ function Form({ title, handleClick }: FormProps) {
   const [user, setUser] = useState<User>({
     email: '',
     password: '',
+    name: ''
   });
   const [alert, setAlert] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
   function submit() {
-    if (user.email && user.password) {
-      return handleClick(user.email, user.password);
+    if (user.email && user.password && (user.name || pathname !== '/register')) {
+      return handleClick(user.email, user.password, user.name);
     } else {
-      setAlert('Все поля обязательны');
+      setAlert('Это поле обязательно для заполнения');
     }
   }
 
@@ -65,6 +66,20 @@ function Form({ title, handleClick }: FormProps) {
 
   return (
     <Box className={style.form}>
+      {
+        pathname === '/register' && <TextField
+        label='Имя'
+        variant='outlined'
+        size='small'
+        value={user.name}
+        id={'name'}
+        error={
+        !!alert
+        }
+        helperText={alert}
+        onChange={(event) => onChange(event)}
+      />
+      }
       <TextField
         label='Email'
         variant='outlined'

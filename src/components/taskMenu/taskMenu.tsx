@@ -8,7 +8,7 @@ import {
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
-import { Task } from '../../store/types/types';
+import { Task } from '../../store/slices/cardListSlice/types';
 import { cardListSlice } from '../../store/slices/cardListSlice/cardListSlice';
 import TaskModalWindow from '../taskModalWindow/taskModalWindow';
 import DeleteIcon from '@mui/icons-material/Delete';
