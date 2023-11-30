@@ -6,7 +6,7 @@ on:
   push:
     branches: ['master']
 
-    env:
+env:
   VITE_INTERNAL: true
 
   # Allows you to run this workflow manually from the Actions tab
