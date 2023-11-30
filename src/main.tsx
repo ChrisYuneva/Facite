@@ -1,10 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App.tsx';
-import {
-    createBrowserRouter,
-    RouterProvider,
-} from 'react-router-dom';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { store } from './store/store';
 import { Provider } from 'react-redux';
 
@@ -18,27 +15,32 @@ import RegisterPage from './pages/registerPage/registerPage.tsx';
 import { theme } from './utils/utilsTheme.ts';
 import { ThemeProvider } from '@mui/material';
 
-const router = createBrowserRouter([
+const router = createBrowserRouter(
+  [
     {
-        path: '/',
-        element: <App/>,
+      path: '/',
+      element: <App />,
     },
     {
-        path: '/login',
-        element: <LoginPage />,
+      path: '/login',
+      element: <LoginPage />,
     },
     {
-        path: '/register',
-        element: <RegisterPage />,
+      path: '/register',
+      element: <RegisterPage />,
     },
-]);
+  ],
+  {
+    basename: '/Facite',
+  }
+);
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-    <React.StrictMode>
-        <Provider store={store}>
-            <ThemeProvider theme={theme}>
-            <RouterProvider router={router}/>
-            </ThemeProvider>
-        </Provider>
-    </React.StrictMode>,
+  <React.StrictMode>
+    <Provider store={store}>
+      <ThemeProvider theme={theme}>
+        <RouterProvider router={router} />
+      </ThemeProvider>
+    </Provider>
+  </React.StrictMode>
 );
