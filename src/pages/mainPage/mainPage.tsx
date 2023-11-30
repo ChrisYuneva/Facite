@@ -4,7 +4,6 @@ import style from './style.module.css';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 import { useEffect } from 'react';
 import { Task } from '../../store/slices/cardListSlice/types';
-import { deleteCookie, getCookie } from '../../utils/utilsCookie';
 import { today } from '../../utils/utilsDate';
 import { Navigate } from 'react-router-dom';
 import useAuth from '../../hooks/useAuth';
@@ -16,8 +15,10 @@ import { updateTaskToDB } from '../../firebase/firebase';
 import Header from '../../components/header/header';
 
 function MainPage() {
-  const { isLoading, toDoList, dbId } = useAppSelector((state) => state.cardList);
-  const { loading, getToDoList, setId, resetToDoList } = cardListSlice.actions;
+  const { isLoading, toDoList, dbId } = useAppSelector(
+    (state) => state.cardList
+  );
+  const { loading, getToDoList, setId } = cardListSlice.actions;
 
   const dispatch = useAppDispatch();
 
@@ -30,7 +31,6 @@ function MainPage() {
           uid: id,
           toDoList: [],
         });
-        // console.log('Document written with ID: ', docRef.id);
       }
     } catch (e) {
       console.error('Error adding document: ', e);
@@ -38,7 +38,12 @@ function MainPage() {
   }
 
   function dateCheck(toDoList: Task[]) {
-    const list = toDoList.filter((item) => !item.dateFullfilment || (item.dateFullfilment.day === today.day && item.dateFullfilment.month === today.month));
+    const list = toDoList.filter(
+      (item) =>
+        !item.dateFullfilment ||
+        (item.dateFullfilment.day === today.day &&
+          item.dateFullfilment.month === today.month)
+    );
     return list.map((item) => {
       if (item.date.day < today.day && item.date.month === today.month) {
         return {
@@ -103,11 +108,9 @@ function MainPage() {
     <>
       {isLoading && <Loader isLoading={isLoading} />}
       {isAuth ? (
-        <Box>
-        <Header />
-        
-        <Grid container className={style.container} spacing={ 1 }>
-          
+        <Box className={style.wrapper}>
+          <Header />
+          <Grid container className={style.container} spacing={1}>
             <CardList
               titleList='Сегодня'
               toDoList={toDoList.filter((item) => item.date.day === today.day)}
@@ -128,7 +131,7 @@ function MainPage() {
               titleList='Потом'
               toDoList={toDoList.filter((item) => item.date.day === 0)}
             />
-        </Grid>
+          </Grid>
         </Box>
       ) : (
         <Navigate to='/login' />

@@ -1,7 +1,11 @@
 body {
-    margin: 0;
+  margin: 0;
+}
+
+.wrapper {
+  padding: 8px;
 }
 
 .container {
-    margin-top: 8px !important;
+  margin-top: 8px !important;
 }
