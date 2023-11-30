@@ -98,7 +98,6 @@ function MainPage() {
   useEffect(() => {
     dispatch(loading());
     querySnapshot();
-    console.log(import.meta.env.VITE_APP_FIREBASE_API_KEY);
   }, []);
 
   useEffect(() => {
