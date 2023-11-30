@@ -1,27 +1,28 @@
-# React + TypeScript + Vite
+# Facite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Веб-приложение, позволяющее распределять задачи по времени (например, сегодня/завтра/на следующей неделе). 
 
-Currently, two official plugins are available:
+## Ссылка на деплой: [https://chrisyuneva.github.io/Facite/](https://chrisyuneva.github.io/Facite/)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Приложение состоит из 2 страниц: 
+- /login - страница авторизации/регистрации.Реализованы: 
+   - авторизация и регистрация с помощью firebase;
+   - валидация электронной почты и пароля.
+- /Facite - главная страница. Реализованы:
+   - добавление задач по определенным столбцам;
+   - возможность установить приоритетность задачи; 
+   - редактирование задачи;
+   - удаление задачи;
+   - перенос карточки задачи по столбцам;
+   - получение списка задач происходит с помощью firestore database.
 
-## Expanding the ESLint configuration
+### Стек технологий: 
+- React v.18.2.0
+- React Router Dom v.6.16.0
+- TypeScript v.5.0.2
+- Redux Toolkit v.1.9.7
+- MUI v.5.14.13
+- MUI Icons v.5.14.13
+- Firebase v.10.6.0
+- Vite v.4.4.5
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-   parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-   },
-```
-
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
