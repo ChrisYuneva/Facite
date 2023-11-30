@@ -1,49 +1,140 @@
 import CardList from '../../components/cardList/cardList';
-import {Grid} from '@mui/material';
+import { Box, Grid } from '@mui/material';
 import style from './style.module.css';
-import {useAppSelector } from '../../hooks/hooks';
-import { useEffect, useState } from 'react';
-import { DateFormat } from '../../store/types/types';
-import { getCurrentWeek } from '../../utils/utils';
-
-const currentDate = new Date();
+import { useAppDispatch, useAppSelector } from '../../hooks/redux';
+import { useEffect } from 'react';
+import { Task } from '../../store/slices/cardListSlice/types';
+import { deleteCookie, getCookie } from '../../utils/utilsCookie';
+import { today } from '../../utils/utilsDate';
+import { Navigate } from 'react-router-dom';
+import useAuth from '../../hooks/useAuth';
+import { collection, addDoc, getDocs, where, query } from 'firebase/firestore';
+import Loader from '../../components/loader/loader';
+import { db } from '../../firebase/';
+import { cardListSlice } from '../../store/slices/cardListSlice/cardListSlice';
+import { updateTaskToDB } from '../../firebase/firebase';
+import Header from '../../components/header/header';
 
 function MainPage() {
-    const { toDoList } = useAppSelector((state) => state.cardList);
+  const { isLoading, toDoList, dbId } = useAppSelector((state) => state.cardList);
+  const { loading, getToDoList, setId, resetToDoList } = cardListSlice.actions;
 
-    const [today, setToday] = useState<DateFormat>({ day: 0, month: 0, week: 0, year: 0 });
+  const dispatch = useAppDispatch();
 
-    useEffect(() => {
-        setToday({
-            day: currentDate.getDate(),
-            month: currentDate.getMonth()+1,
-            week: getCurrentWeek(currentDate),
-            year: currentDate.getFullYear()
+  const { isAuth, id } = useAuth();
+
+  async function addDB() {
+    try {
+      if (id !== '') {
+        await addDoc(collection(db, 'users'), {
+          uid: id,
+          toDoList: [],
         });
-    }, []);
+        // console.log('Document written with ID: ', docRef.id);
+      }
+    } catch (e) {
+      console.error('Error adding document: ', e);
+    }
+  }
 
-    return (
-        <Grid container xs={12}>
-            <Grid item xs={12} className={style.wrap}>
-                <CardList 
-                    titleList='Сегодня' 
-                    toDoList={toDoList.filter(item => item.date.day === today.day)} 
-                />
-                <CardList 
-                    titleList='Завтра' 
-                    toDoList={toDoList.filter(item => item.date.day === today.day+1)} 
-                />
-                <CardList 
-                    titleList='На следующей неделе' 
-                    toDoList={toDoList.filter(item => item.date.week === today.week+1)} 
-                />
-                <CardList 
-                    titleList='Потом' 
-                    toDoList={toDoList.filter(item => item.date.day === 0)} 
-                />
-            </Grid>
-        </Grid>
+  function dateCheck(toDoList: Task[]) {
+    const list = toDoList.filter((item) => !item.dateFullfilment || (item.dateFullfilment.day === today.day && item.dateFullfilment.month === today.month));
+    return list.map((item) => {
+      if (item.date.day < today.day && item.date.month === today.month) {
+        return {
+          ...item,
+          date: {
+            ...item.date,
+            day: today.day,
+          },
+        };
+      }
+      if (item.date.month < today.month) {
+        return {
+          ...item,
+          date: {
+            ...item.date,
+            day: today.day,
+            month: today.month,
+          },
+        };
+      }
+      if (item.date.week < today.week) {
+        return {
+          ...item,
+          date: {
+            ...item.date,
+            day: today.day,
+            month: today.month,
+            week: today.week,
+          },
+        };
+      }
+      return item;
+    });
+  }
+
+  async function querySnapshot() {
+    const data = await getDocs(
+      query(collection(db, 'users'), where('uid', '==', id))
     );
+    if (data.docs.length) {
+      data.forEach((doc) => {
+        const data = doc.get('toDoList');
+        dispatch(getToDoList(dateCheck(data)));
+        dispatch(setId(doc.id));
+      });
+    } else {
+      addDB();
+      querySnapshot();
+    }
+  }
+
+  useEffect(() => {
+    dispatch(loading());
+    querySnapshot();
+  }, []);
+
+  useEffect(() => {
+    updateTaskToDB(toDoList, dbId);
+  }, [toDoList]);
+
+  return (
+    <>
+      {isLoading && <Loader isLoading={isLoading} />}
+      {isAuth ? (
+        <Box>
+        <Header />
+        
+        <Grid container className={style.container} spacing={ 1 }>
+          
+            <CardList
+              titleList='Сегодня'
+              toDoList={toDoList.filter((item) => item.date.day === today.day)}
+            />
+            <CardList
+              titleList='Завтра'
+              toDoList={toDoList.filter(
+                (item) => item.date.day === today.day + 1
+              )}
+            />
+            <CardList
+              titleList='На следующей неделе'
+              toDoList={toDoList.filter(
+                (item) => item.date.week === today.week + 1
+              )}
+            />
+            <CardList
+              titleList='Потом'
+              toDoList={toDoList.filter((item) => item.date.day === 0)}
+            />
+        </Grid>
+        </Box>
+      ) : (
+        <Navigate to='/login' />
+      )}
+    </>
+  );
 }
 
 export default MainPage;

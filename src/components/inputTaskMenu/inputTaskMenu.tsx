@@ -7,13 +7,14 @@ import {
   Typography,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { useAppDispatch, useAppSelector } from '../../hooks/hooks';
-import { Priority, Task } from '../../store/types/types';
-import { cardListSlice } from '../../store/cardListSlice/cardListSlice';
+import { useAppDispatch, useAppSelector } from '../../hooks/redux';
+import { Priority, Task } from '../../store/slices/cardListSlice/types';
+import { cardListSlice } from '../../store/slices/cardListSlice/cardListSlice';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import NewReleasesIcon from '@mui/icons-material/NewReleases';
 import AdjustIcon from '@mui/icons-material/Adjust';
 import style from './style.module.css';
+import { updateTaskToDB } from '../../firebase/firebase';
 
 interface InputTaskMenuProps {
   visibleButton: boolean;
@@ -28,7 +29,7 @@ function InputTaskMenu({
   setCurrentTask,
   setPriority,
 }: InputTaskMenuProps) {
-  const { toDoList } = useAppSelector(state => state.cardList);
+  const { toDoList, dbId } = useAppSelector((state) => state.cardList);
 
   const dispatch = useAppDispatch();
   const { update } = cardListSlice.actions;
@@ -42,24 +43,33 @@ function InputTaskMenu({
   }
 
   function changeClassNameBtn(priority: Priority) {
-    if(priority === 'urgently') {
+    if (priority === 'urgently') {
       setClassNameBtn(`${style.urgently}`);
     }
-    if(priority === 'veryUrgently') {
+    if (priority === 'veryUrgently') {
       setClassNameBtn(`${style.veryUrgently}`);
     }
-    if(classNameBtn !== '' && priority === 'default') {
+    if (classNameBtn !== '' && priority === 'default') {
       setClassNameBtn('');
     }
   }
 
   function handlePriorityUpdate(priority: Priority) {
     if (task) {
-      if(setCurrentTask) {
+      const updateTask = { ...task, priority };
+      if (setCurrentTask) {
         setCurrentTask({ ...task, priority });
-      }
-      else {
+      } else {
         dispatch(update({ ...task, priority }));
+        updateTaskToDB(
+          toDoList.map((item) => {
+            if (item.id === updateTask.id) {
+              return updateTask;
+            }
+
+            return item;
+          }), 
+          dbId);
       }
 
       changeClassNameBtn(priority);

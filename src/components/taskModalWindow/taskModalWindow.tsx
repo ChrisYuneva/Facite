@@ -6,11 +6,12 @@ import {
   TextField,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { useAppDispatch } from '../../hooks/hooks';
-import { cardListSlice } from '../../store/cardListSlice/cardListSlice';
-import { Task } from '../../store/types/types';
+import { useAppDispatch, useAppSelector } from '../../hooks/redux';
+import { cardListSlice } from '../../store/slices/cardListSlice/cardListSlice';
+import { Task } from '../../store/slices/cardListSlice/types';
 import style from './style.module.css';
 import InputTaskMenu from '../inputTaskMenu/inputTaskMenu';
+import { updateTaskToDB } from '../../firebase/firebase';
 
 export interface TaskModalWindowProps {
   open: boolean;
@@ -21,6 +22,7 @@ export interface TaskModalWindowProps {
 function TaskModalWindow({ open, task, onClose }: TaskModalWindowProps) {
   const dispatch = useAppDispatch();
   const { update, deleteTask } = cardListSlice.actions;
+  const { toDoList, dbId } = useAppSelector((state) => state.cardList);
   const [currentTask, setCurrentTask] = useState<Task | null>(null);
 
   useEffect(() => {
@@ -30,6 +32,13 @@ function TaskModalWindow({ open, task, onClose }: TaskModalWindowProps) {
   function save() {
     if (currentTask) {
       dispatch(update(currentTask));
+      updateTaskToDB(toDoList.map(item => {
+        if (item.id === currentTask.id) {
+          return currentTask;
+        }
+  
+        return item;
+      }), dbId);
     }
     setCurrentTask(null);
     onClose();
@@ -37,6 +46,7 @@ function TaskModalWindow({ open, task, onClose }: TaskModalWindowProps) {
 
   function handleDelete() {
     dispatch(deleteTask(task));
+    updateTaskToDB(toDoList.filter((item) => item.id !== task.id), dbId);
     setCurrentTask(null);
     onClose();
   }

@@ -1,5 +1,7 @@
-.wrap {
-    display: flex;
-    flex-direction: row;
-    gap: 5px;
+body {
+    margin: 0;
+}
+
+.container {
+    margin-top: 8px !important;
 }

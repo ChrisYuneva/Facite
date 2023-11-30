@@ -1,5 +1,4 @@
 import {
-  Button,
   Card,
   CardHeader,
   Checkbox,
@@ -10,21 +9,23 @@ import {
   Typography,
 } from '@mui/material';
 import style from './style.module.css';
-import { useAppDispatch, useAppSelector } from '../../hooks/hooks';
-import { cardListSlice } from '../../store/cardListSlice/cardListSlice';
-import { useState } from 'react';
-import { Priority, Task } from '../../store/types/types';
+import { useAppDispatch, useAppSelector } from '../../hooks/redux';
+import { cardListSlice } from '../../store/slices/cardListSlice/cardListSlice';
+import { useRef, useState } from 'react';
+import { Priority, Task } from '../../store/slices/cardListSlice/types';
 import TaskMenu from '../taskMenu/taskMenu';
-import { getCurrentWeek, getUpcomingMonday } from '../../utils/utils';
+import { getDateList, today } from '../../utils/utilsDate';
+import { uId } from '../../utils/utilsUId';
 import InputTaskMenu from '../inputTaskMenu/inputTaskMenu';
 import TaskModalWindow from '../taskModalWindow/taskModalWindow';
+import { updateTaskToDB } from '../../firebase/firebase';
+import ButtonCustom from '../buttonCustom/buttonCustom';
+import useKeypress from '../../hooks/useKeyPress';
 
 interface CardListProps {
   titleList: string;
   toDoList: Task[];
 }
-
-const currentDate = new Date();
 
 function CardList({ titleList, toDoList }: CardListProps) {
   const [content, setContent] = useState<string>('');
@@ -33,85 +34,77 @@ function CardList({ titleList, toDoList }: CardListProps) {
   const [openModal, setOpenModal] = useState(false);
   const [currentTask, setCurrentTask] = useState<Task | null>(null);
 
+  const currentInput = useRef(null);
+
   const dispatch = useAppDispatch();
   const { add, update } = cardListSlice.actions;
   const allToDoList = useAppSelector((state) => state.cardList.toDoList);
-
-  function getDate(titleList: string) {
-    switch (titleList) {
-      case 'Сегодня':
-        return {
-          day: currentDate.getDate(),
-          month: currentDate.getMonth() + 1,
-          week: getCurrentWeek(currentDate),
-          year: currentDate.getFullYear(),
-        };
-      case 'Завтра':
-        return {
-          day: currentDate.getDate() + 1,
-          month: currentDate.getMonth() + 1,
-          week: getCurrentWeek(currentDate),
-          year: currentDate.getFullYear(),
-        };
-      case 'На следующей неделе':
-        return {
-          day: getUpcomingMonday(),
-          month: currentDate.getMonth() + 1,
-          week: getCurrentWeek(currentDate) + 1,
-          year: currentDate.getFullYear(),
-        };
-        case 'Потом':
-        return {
-          day: 0,
-          month: 0,
-          week: 0,
-          year: 0,
-        };
-      default:
-        return {
-          day: 0,
-          month: 0,
-          week: 0,
-          year: 0,
-        };
-    }
-  }
+  const { dbId } = useAppSelector((state) => state.cardList);
 
   function addTask() {
     if (content === '') {
-      setAlert(true);
+      if (currentInput.current === document.activeElement) {
+        setAlert(true);
+      }
     } else {
+      const newItem = {
+        id: uId(),
+        content,
+        priority,
+        fulfillment: false,
+        date: getDateList(titleList),
+      };
       setAlert(false);
-      dispatch(
-        add({
-          content,
-          priority,
-          fulfillment: false,
-          date: getDate(titleList),
-        })
-      );
+      dispatch(add(newItem));
+      updateTaskToDB([...allToDoList, newItem], dbId);
       setContent('');
       setPriority('default');
     }
   }
 
+  useKeypress('Enter', addTask);
+
   function updateTaskFulfillment(task: Task) {
-    dispatch(update({ ...task, fulfillment: !task.fulfillment }));
+    const updateTask: Task = {
+      ...task,
+      fulfillment: !task.fulfillment,
+      dateFullfilment: !task.fulfillment
+      ? today
+      : undefined 
+    };
+    dispatch(update(updateTask));
+    updateTaskToDB(
+      allToDoList.map((item) => {
+        if (item.id === updateTask.id) {
+          return updateTask;
+        }
+
+        return item;
+      }),
+      dbId);
   }
 
   function onDropTask(event: React.DragEvent<HTMLDivElement>) {
     const currentId = event.dataTransfer.getData('id');
     const currentToDo = allToDoList.find((el) => el.id === currentId);
+    const updateTask = {
+      id: currentToDo?.id,
+      content: currentToDo?.content ?? '',
+      priority: currentToDo?.priority ?? 'default',
+      fulfillment: currentToDo?.fulfillment ?? false,
+      date: getDateList(event.currentTarget.id),
+    };
 
-    dispatch(
-      update({
-        id: currentToDo?.id,
-        content: currentToDo?.content ?? '',
-        priority: currentToDo?.priority ?? 'default',
-        fulfillment: currentToDo?.fulfillment ?? false,
-        date: getDate(event.currentTarget.id),
-      })
-    );
+    dispatch(update(updateTask));
+    updateTaskToDB(
+      allToDoList.map((item) => {
+        if (item.id === updateTask.id) {
+          return updateTask;
+        }
+
+        return item;
+      }), 
+    dbId);
 
     event.dataTransfer.clearData();
   }
@@ -138,7 +131,9 @@ function CardList({ titleList, toDoList }: CardListProps) {
   }
 
   function handleUpdate(event: React.MouseEvent<HTMLSpanElement, MouseEvent>) {
-    setCurrentTask(toDoList.find(item => item.id === event.target.id) ?? null);
+    setCurrentTask(
+      toDoList.find((item) => item.id === (event.target as HTMLElement).id) ?? null
+    );
     setOpenModal(true);
   }
 
@@ -148,7 +143,7 @@ function CardList({ titleList, toDoList }: CardListProps) {
   }
 
   return (
-    <Grid item xs={3}>
+    <Grid item xs={12} sm={6} md={3} lg={3} xl={3}>
       <Card
         id={titleList}
         className={style.wrap}
@@ -162,6 +157,7 @@ function CardList({ titleList, toDoList }: CardListProps) {
             setContent(event.target.value);
           }}
           error={alert}
+          inputRef={currentInput}
           helperText={alert && 'Введите задачу.'}
           className={style.inputTask}
           id='outlined-basic'
@@ -174,8 +170,7 @@ function CardList({ titleList, toDoList }: CardListProps) {
               </InputAdornment>
             ),
           }}
-        ></TextField>
-
+        />
         <FormGroup className={style.taskWrap}>
           {toDoList.map((task) => {
             return (
@@ -185,7 +180,7 @@ function CardList({ titleList, toDoList }: CardListProps) {
                 id={task.id}
                 draggable={!task.fulfillment}
                 onDragStart={(event) => {
-                  event.dataTransfer.setData('id', event.target.id);
+                  event.dataTransfer.setData('id', (event.target as HTMLElement).id);
                 }}
               >
                 <Checkbox
@@ -204,15 +199,15 @@ function CardList({ titleList, toDoList }: CardListProps) {
             );
           })}
         </FormGroup>
-        <Button onClick={addTask}>Добавить задачу</Button>
+        <ButtonCustom onClick={addTask} variant='contained' text='Добавить задачу' className={style.btn}/>
       </Card>
-      {
-        currentTask && <TaskModalWindow
+      {currentTask && (
+        <TaskModalWindow
           task={currentTask}
           open={openModal}
           onClose={handleClose}
         />
-      }
+      )}
     </Grid>
   );
 }

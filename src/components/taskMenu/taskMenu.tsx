@@ -7,13 +7,14 @@ import {
 } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { useState } from 'react';
-import { useAppDispatch } from '../../hooks/hooks';
-import { Task } from '../../store/types/types';
-import { cardListSlice } from '../../store/cardListSlice/cardListSlice';
+import { useAppDispatch, useAppSelector } from '../../hooks/redux';
+import { Task } from '../../store/slices/cardListSlice/types';
+import { cardListSlice } from '../../store/slices/cardListSlice/cardListSlice';
 import TaskModalWindow from '../taskModalWindow/taskModalWindow';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import InputTaskMenu from '../inputTaskMenu/inputTaskMenu';
+import { updateTaskToDB } from '../../firebase/firebase';
 
 interface TaskMenuProps {
   task: Task;
@@ -22,6 +23,7 @@ interface TaskMenuProps {
 function TaskMenu({ task }: TaskMenuProps) {
   const dispatch = useAppDispatch();
   const { deleteTask } = cardListSlice.actions;
+  const { toDoList, dbId } = useAppSelector((state) => state.cardList);
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -34,10 +36,7 @@ function TaskMenu({ task }: TaskMenuProps) {
 
   function handleDelete() {
     dispatch(deleteTask(task));
-    setAnchorEl(null);
-  }
-
-  function handlePriority() {
+    updateTaskToDB(toDoList.filter((item) => item.id !== task.id), dbId);
     setAnchorEl(null);
   }
 
