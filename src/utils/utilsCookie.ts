@@ -9,7 +9,8 @@ export function getCookie(name: string) {
   return matches ? decodeURIComponent(matches[1]) : undefined;
 }
 
-export function setCookie(name: string, value: string, options = {}) {
+/* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+export function setCookie(name: string, value: string, options: any) {
   options = {
     // path: '/',
     // при необходимости добавьте другие значения по умолчанию

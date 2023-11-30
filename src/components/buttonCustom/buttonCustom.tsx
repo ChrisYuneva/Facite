@@ -1,7 +1,4 @@
 import { Button } from '@mui/material';
-
-import style from './style.module.css';
-
 interface ButtonProps {
   text: string;
   variant: 'text' | 'outlined' | 'contained';
@@ -11,7 +8,7 @@ interface ButtonProps {
 
 function ButtonCustom({ text, variant, className, onClick }: ButtonProps) {
   return (
-    <Button variant={variant} onClick={onClick} className={`${style.btn} ${className}`}>
+    <Button variant={variant} onClick={onClick} className={className}>
       {text}
     </Button>
   );

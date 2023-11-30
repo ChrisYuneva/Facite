@@ -1,5 +1,5 @@
 import CardList from '../../components/cardList/cardList';
-import { Grid } from '@mui/material';
+import { Box, Grid } from '@mui/material';
 import style from './style.module.css';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 import { useEffect } from 'react';
@@ -13,6 +13,7 @@ import Loader from '../../components/loader/loader';
 import { db } from '../../firebase/';
 import { cardListSlice } from '../../store/slices/cardListSlice/cardListSlice';
 import { updateTaskToDB } from '../../firebase/firebase';
+import Header from '../../components/header/header';
 
 function MainPage() {
   const { isLoading, toDoList, dbId } = useAppSelector((state) => state.cardList);
@@ -20,7 +21,7 @@ function MainPage() {
 
   const dispatch = useAppDispatch();
 
-  const { isAuth, email, id, token } = useAuth();
+  const { isAuth, id } = useAuth();
 
   async function addDB() {
     try {
@@ -89,14 +90,6 @@ function MainPage() {
     }
   }
 
-  function logout() {
-    deleteCookie('id');
-    deleteCookie('name');
-    deleteCookie('email');
-    deleteCookie('token');
-    dispatch(resetToDoList());
-  }
-
   useEffect(() => {
     dispatch(loading());
     querySnapshot();
@@ -110,8 +103,11 @@ function MainPage() {
     <>
       {isLoading && <Loader isLoading={isLoading} />}
       {isAuth ? (
-        <Grid container xs={12} className={style.container}>
-          <Grid item xs={12} className={style.wrap}>
+        <Box>
+        <Header />
+        
+        <Grid container className={style.container} spacing={ 1 }>
+          
             <CardList
               titleList='Сегодня'
               toDoList={toDoList.filter((item) => item.date.day === today.day)}
@@ -132,9 +128,8 @@ function MainPage() {
               titleList='Потом'
               toDoList={toDoList.filter((item) => item.date.day === 0)}
             />
-          </Grid>
-          <button onClick={logout}>Выйти {getCookie('name')}</button>
         </Grid>
+        </Box>
       ) : (
         <Navigate to='/login' />
       )}

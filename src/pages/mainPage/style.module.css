@@ -3,11 +3,5 @@ body {
 }
 
 .container {
-    padding: 8px;
-}
-
-.wrap {
-    display: flex;
-    flex-direction: row;
-    gap: 5px;
+    margin-top: 8px !important;
 }

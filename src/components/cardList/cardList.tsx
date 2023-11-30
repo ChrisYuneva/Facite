@@ -11,7 +11,7 @@ import {
 import style from './style.module.css';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 import { cardListSlice } from '../../store/slices/cardListSlice/cardListSlice';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Priority, Task } from '../../store/slices/cardListSlice/types';
 import TaskMenu from '../taskMenu/taskMenu';
 import { getDateList, today } from '../../utils/utilsDate';
@@ -34,6 +34,8 @@ function CardList({ titleList, toDoList }: CardListProps) {
   const [openModal, setOpenModal] = useState(false);
   const [currentTask, setCurrentTask] = useState<Task | null>(null);
 
+  const currentInput = useRef(null);
+
   const dispatch = useAppDispatch();
   const { add, update } = cardListSlice.actions;
   const allToDoList = useAppSelector((state) => state.cardList.toDoList);
@@ -41,7 +43,9 @@ function CardList({ titleList, toDoList }: CardListProps) {
 
   function addTask() {
     if (content === '') {
-      setAlert(true);
+      if (currentInput.current === document.activeElement) {
+        setAlert(true);
+      }
     } else {
       const newItem = {
         id: uId(),
@@ -128,7 +132,7 @@ function CardList({ titleList, toDoList }: CardListProps) {
 
   function handleUpdate(event: React.MouseEvent<HTMLSpanElement, MouseEvent>) {
     setCurrentTask(
-      toDoList.find((item) => item.id === event.target.id) ?? null
+      toDoList.find((item) => item.id === (event.target as HTMLElement).id) ?? null
     );
     setOpenModal(true);
   }
@@ -139,7 +143,7 @@ function CardList({ titleList, toDoList }: CardListProps) {
   }
 
   return (
-    <Grid item xs={3}>
+    <Grid item xs={12} sm={6} md={3} lg={3} xl={3}>
       <Card
         id={titleList}
         className={style.wrap}
@@ -153,6 +157,7 @@ function CardList({ titleList, toDoList }: CardListProps) {
             setContent(event.target.value);
           }}
           error={alert}
+          inputRef={currentInput}
           helperText={alert && 'Введите задачу.'}
           className={style.inputTask}
           id='outlined-basic'
@@ -165,8 +170,7 @@ function CardList({ titleList, toDoList }: CardListProps) {
               </InputAdornment>
             ),
           }}
-        ></TextField>
-
+        />
         <FormGroup className={style.taskWrap}>
           {toDoList.map((task) => {
             return (
@@ -176,7 +180,7 @@ function CardList({ titleList, toDoList }: CardListProps) {
                 id={task.id}
                 draggable={!task.fulfillment}
                 onDragStart={(event) => {
-                  event.dataTransfer.setData('id', event.target.id);
+                  event.dataTransfer.setData('id', (event.target as HTMLElement).id);
                 }}
               >
                 <Checkbox
