@@ -3,6 +3,7 @@ import {initialTypeCardList, Task} from './types';
 
 const initialState: initialTypeCardList = {
     toDoList: [],
+    userName: '',
     dbId: '',
     isLoading: false,
     errorMessage: ''
@@ -21,6 +22,9 @@ export const cardListSlice = createSlice({
         },
         setId(state, action: PayloadAction<string>) {
             state.dbId = action.payload;
+        },
+        setUserName(state, action: PayloadAction<string>) {
+            state.userName = action.payload;
         },
         add(state, action: PayloadAction<Task>) {
             state.toDoList.unshift(action.payload);
@@ -44,7 +48,8 @@ export const cardListSlice = createSlice({
             state.dbId = '';
             state.errorMessage = '';
             state.isLoading = false;
-            state.toDoList = [];
+            state.toDoList = []; 
+            state.userName = '';
         }
     }
 });

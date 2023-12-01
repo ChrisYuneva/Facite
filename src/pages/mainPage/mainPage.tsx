@@ -15,11 +15,10 @@ import { updateTaskToDB } from '../../firebase/firebase';
 import Header from '../../components/header/header';
 
 function MainPage() {
-  const { isLoading, toDoList, dbId } = useAppSelector(
+  const { isLoading, toDoList, dbId, userName } = useAppSelector(
     (state) => state.cardList
   );
   const { loading, getToDoList, setId } = cardListSlice.actions;
-
   const dispatch = useAppDispatch();
 
   const { isAuth, id } = useAuth();
@@ -30,6 +29,7 @@ function MainPage() {
         await addDoc(collection(db, 'users'), {
           uid: id,
           toDoList: [],
+          userName: userName
         });
       }
     } catch (e) {
@@ -45,7 +45,7 @@ function MainPage() {
           item.dateFullfilment.month === today.month)
     );
     return list.map((item) => {
-      if (item.date.day < today.day && item.date.month === today.month) {
+      if (item.date.day < today.day && item.date.month === today.month && item.date.day !==0) {
         return {
           ...item,
           date: {
@@ -54,7 +54,7 @@ function MainPage() {
           },
         };
       }
-      if (item.date.month < today.month) {
+      if (item.date.month < today.month && item.date.day !==0) {
         return {
           ...item,
           date: {
@@ -64,7 +64,7 @@ function MainPage() {
           },
         };
       }
-      if (item.date.week < today.week) {
+      if (item.date.week < today.week && item.date.day !==0) {
         return {
           ...item,
           date: {

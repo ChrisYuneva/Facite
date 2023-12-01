@@ -1,5 +1,6 @@
 export interface initialTypeCardList {
     toDoList: Task[],
+    userName?: string,
     dbId: string,
     isLoading: boolean,
     errorMessage: string,

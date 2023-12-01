@@ -4,8 +4,13 @@ import { createUserWithEmailAndPassword, getAuth, updateProfile } from 'firebase
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import AlertCustom from '../../components/alert/alert';
+import { useAppDispatch } from '../../hooks/redux';
+import { cardListSlice } from '../../store/slices/cardListSlice/cardListSlice';
 
 function RegisterPage() {
+  const { setUserName } = cardListSlice.actions;
+  const dispatch = useAppDispatch();
+
   const navigate = useNavigate();
   const [alert, setAlert] = useState('');
 
@@ -18,6 +23,7 @@ function RegisterPage() {
             displayName: name
           });
           document.cookie = `name=${name}`;
+          dispatch(setUserName(name));
         }
 
         document.cookie = `id=${user.uid}`;
