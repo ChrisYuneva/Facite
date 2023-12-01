@@ -18,7 +18,7 @@ function MainPage() {
   const { isLoading, toDoList, dbId, userName } = useAppSelector(
     (state) => state.cardList
   );
-  const { loading, getToDoList, setId } = cardListSlice.actions;
+  const { loading, getToDoList, setId, setUserName } = cardListSlice.actions;
   const dispatch = useAppDispatch();
 
   const { isAuth, id } = useAuth();
@@ -85,9 +85,11 @@ function MainPage() {
     );
     if (data.docs.length) {
       data.forEach((doc) => {
-        const data = doc.get('toDoList');
-        dispatch(getToDoList(dateCheck(data)));
+        const dataToDoList = doc.get('toDoList');
+        const dataUserName = doc.get('userName');
+        dispatch(getToDoList(dateCheck(dataToDoList)));
         dispatch(setId(doc.id));
+        dispatch(setUserName(dataUserName));
       });
     } else {
       addDB();
